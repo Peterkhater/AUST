@@ -11,12 +11,13 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 
-ALLOWED_HOSTS = ['192.168.1.26','127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.26','127.0.0.1','aust.pythonanywhere.com']
 
 #secret kefrom decouple import config
 
 OPENWEATHER_API_KEY = config("OPENWEATHER_API_KEY")
 GROQ_API_KEY = config("GROQ_API_KEY")
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -59,6 +60,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project.urls'
 
+
+
+WSGI_APPLICATION = 'project.wsgi.application'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -74,7 +82,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project.wsgi.application'
 
 
 DATABASES = {
