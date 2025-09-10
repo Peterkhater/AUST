@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Produce - FarmConnect AI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Swiper.js for carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <!-- noUiSlider for price filtering -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            400: '#a8a29e',
+                            500: '#78716c',
+                            600: '#57534e',
+                            700: '#44403c',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        accent: {
+                            DEFAULT: '#F47137',
+                            50: '#fef4eb',
+                            100: '#fde6d2',
+                            200: '#fac9a5',
+                            300: '#f7a36d',
+                            400: '#f47137',
+                            500: '#f1531a',
+                            600: '#e23810',
+                            700: '#bb2810',
+                            800: '#962214',
+                            900: '#791f14',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.7s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-delay-1 { animation-delay: 0.2s; }
+        .animate-delay-2 { animation-delay: 0.4s; }
+        .animate-delay-3 { animation-delay: 0.6s; }
+        
+        /* Gradient backgrounds */
+        .hero-gradient {
+            background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%);
+        }
+        
+        .cta-gradient {
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+        }
+        
+        /* Card hover effects */
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Filter sidebar */
+        .filter-section {
+            transition: all 0.3s ease;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+        
+        /* Swiper customization */
+        .swiper-pagination-bullet-active {
+            background-color: #16a34a !important;
+        }
+        
+        /* noUiSlider customization */
+        .noUi-connect {
+            background: #16a34a;
+        }
+        
+        .noUi-handle {
+            border-radius: 50%;
+            background: #16a34a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 2px solid white;
+        }
+        
+        .noUi-handle:before, .noUi-handle:after {
+            display: none;
+        }
+        
+        /* Skeleton loading animation */
+        @keyframes skeleton-loading {
+            0% {
+                background-color: hsl(200, 20%, 80%);
+            }
+            100% {
+                background-color: hsl(200, 20%, 95%);
+            }
+        }
+        
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased" x-data="{ mobileFiltersOpen: false, quickViewOpen: false, selectedProduct: null }">
+    <!-- Navigation -->
+    <!-- <nav class="sticky top-0 w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm py-4">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                <span class="text-primary-600">
+                    <i class="fas fa-leaf text-2xl"></i>
+                </span>
+                <span class="font-bold text-xl text-primary-800">FarmConnect<span class="text-primary-600">AI</span></span>
+            </a>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Home</a>
+                <a href="#" class="text-primary-700 font-medium hover:text-primary-500 transition">Marketplace</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">For Farmers</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Weather Tools</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">About</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-600 hover:text-primary-600 transition">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="text-gray-600 hover:text-primary-600 transition relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                </button>
+                <a href="#" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md hidden md:block">Sign In</a>
+                <button class="md:hidden text-gray-600" @click="mobileFiltersOpen = true">
+                    <i class="fas fa-filter text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav> -->
+    
+{% include "core/base.html" %}
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 hero-gradient text-white">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Explore Fresh Produce from Western Bekaa</h1>
+            <p class="text-xl mb-8 text-primary-100 max-w-3xl mx-auto">Directly from farmers — fair prices, guaranteed freshness.</p>
+            
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto bg-white rounded-full shadow-lg p-2 flex">
+                <input type="text" placeholder="Search for vegetables, fruits, farms..." class="flex-grow bg-transparent text-gray-800 px-6 py-3 focus:outline-none">
+                <button class="bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition">Search</button>
+            </div>
+            
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap justify-center gap-3 mt-8">
+                <button class="bg-white/20 text-white px-4 py-2 rounded-full hover:bg-white/30 transition">Vegetables</button>
+                <button class="bg-white/20 text-white px-4 py-2 rounded-full hover:bg-white/30 transition">Fruits</button>
+                <button class="bg-white/20 text-white px-4 py-2 rounded-full hover:bg-white/30 transition">Dairy</button>
+                <button class="bg-white/20 text-white px-4 py-2 rounded-full hover:bg-white/30 transition">Organic</button>
+                <button class="bg-white/20 text-white px-4 py-2 rounded-full hover:bg-white/30 transition">New Arrivals</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 md:px-6 py-12 flex flex-col md:flex-row gap-8">
+        <!-- Filters Sidebar (Desktop) -->
+        <aside class="hidden md:block w-64 flex-shrink-0">
+            <div class="bg-white rounded-2xl shadow-md p-6 sticky top-28">
+                <h2 class="text-xl font-bold mb-6">Filters</h2>
+                
+                <!-- Categories -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Categories</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Vegetables</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" checked>
+                            <span class="ml-2">Fruits</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Dairy & Eggs</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Herbs</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Grains</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Price Range -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Price Range</h3>
+                    <div id="price-slider" class="mb-4 h-2"></div>
+                    <div class="flex justify-between text-sm">
+                        <span>$2</span>
+                        <span>$25</span>
+                    </div>
+                </div>
+                
+                <!-- Location -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Location</h3>
+                    <select class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500">
+                        <option>All Regions</option>
+                        <option>Western Bekaa</option>
+                        <option>Central Bekaa</option>
+                        <option>Nearby Areas</option>
+                    </select>
+                </div>
+                
+                <!-- Availability -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Availability</h3>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" checked>
+                        <span class="ml-2">In Stock</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                        <span class="ml-2">Pre-order</span>
+                    </label>
+                </div>
+                
+                <!-- Organic -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Certifications</h3>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                        <span class="ml-2">Organic</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                        <span class="ml-2">Local Farm</span>
+                    </label>
+                </div>
+                
+                <button class="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition">Apply Filters</button>
+                <button class="w-full mt-3 text-gray-600 py-3 rounded-lg hover:text-gray-800 transition">Reset Filters</button>
+            </div>
+        </aside>
+        
+        <!-- Products Grid -->
+        <div class="flex-1">
+            <!-- Results Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold">Fresh Produce</h2>
+                    <p class="text-gray-600">124 products found</p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <span class="mr-2 text-gray-600">Sort by:</span>
+                        <select class="border-0 bg-transparent focus:ring-0">
+                            <option>Newest First</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Most Popular</option>
+                        </select>
+                    </div>
+                    
+                    <div class="hidden md:flex space-x-2">
+                        <button class="p-2 rounded-lg bg-gray-200 text-gray-600">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button class="p-2 rounded-lg bg-white border text-gray-600">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1561136594-7f68413baa99?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Organic Tomatoes" class="w-full h-full object-cover">
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-primary-600 text-white text-xs px-2 py-1 rounded-full">NEW</span>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <button class="bg-white/80 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                                <i class="fas fa-leaf mr-1 text-xs"></i> ORGANIC
+                            </span>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1">Organic Tomatoes</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Al-Amine Farm • Western Bekaa</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$3.99 / kg</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition" @click="quickViewOpen = true; selectedProduct = 1">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1603052875180-e1e10e5a0b36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Fresh Cucumbers" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4">
+                            <button class="bg-white/80 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Fresh Cucumbers</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Bekaa Valley Greens • Central Bekaa</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$2.49 / kg</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition" @click="quickViewOpen = true; selectedProduct = 2">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1603278661081-8e1755c3b973?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Sweet Strawberries" class="w-full h-full object-cover">
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-accent text-white text-xs px-2 py-1 rounded-full">POPULAR</span>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <button class="bg-white/80 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                                <i class="fas fa-leaf mr-1 text-xs"></i> ORGANIC
+                            </span>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1">Sweet Strawberries</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Jounieh Berries • Coastal Area</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$5.99 / box</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition" @click="quickViewOpen = true; selectedProduct = 3">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1604322824011-8375a55d7d12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Organic Lettuce" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4">
+                            <button class="bg-white/80 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Organic Lettuce</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Green Fields Co-op • Western Bekaa</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$2.99 / piece</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition" @click="quickViewOpen = true; selectedProduct = 4">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 5 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1604329766689-b71bdfc8d358?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Fresh Carrots" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4">
+                            <button class="bg-white/80 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Fresh Carrots</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Bekaa Roots Farm • Central Bekaa</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$1.99 / kg</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition" @click="quickViewOpen = true; selectedProduct = 5">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 6 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1591768575198-88dac53fbd0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Avocados" class="w-full h-full object-cover">
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-primary-600 text-white text-xs px-2 py-1 rounded-full">NEW</span>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <button class="bg-white/80 text-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Fresh Avocados</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Southern Groves • Southern Lebanon</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$7.99 / kg</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition" @click="quickViewOpen = true; selectedProduct = 6">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-center mt-12">
+                <nav class="flex items-center space-x-2">
+                    <button class="w-10 h-10 flex items-center justify-center rounded-lg border text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-600 text-white">1</button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-lg border text-gray-600 hover:bg-gray-100">2</button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-lg border text-gray-600 hover:bg-gray-100">3</button>
+                    <span class="px-2">...</span>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-lg border text-gray-600 hover:bg-gray-100">8</button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-lg border text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Recommended For You -->
+    <section class="bg-white py-16">
+        <div class="container mx-auto px-4 md:px-6">
+            <h2 class="text-3xl font-bold mb-8 text-center">Recommended For You</h2>
+            
+            <!-- Swiper Recommended -->
+            <div class="swiper recommended-swiper">
+                <div class="swiper-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                            <div class="h-48 bg-gray-200 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1574856344991-aaa31b6f4ce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Fresh Vegetables Bundle" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Fresh Vegetables Bundle</h3>
+                                <p class="text-gray-600 text-sm mb-3">From Bekaa Family Farms</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary-600 font-bold">$12.99 / box</span>
+                                    <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide">
+                        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                            <div class="h-48 bg-gray-200 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Fresh Fruits Basket" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Fresh Fruits Basket</h3>
+                                <p class="text-gray-600 text-sm mb-3">From Mountain Orchard</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary-600 font-bold">$15.99 / basket</span>
+                                    <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide">
+                        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                            <div class="h-48 bg-gray-200 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Organic Eggs" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Organic Eggs</h3>
+                                <p class="text-gray-600 text-sm mb-3">From Happy Hens Farm</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary-600 font-bold">$4.99 / dozen</span>
+                                    <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide">
+                        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                            <div class="h-48 bg-gray-200 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1591768575198-88dac53fbd0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Fresh Avocados" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">Fresh Avocados</h3>
+                                <p class="text-gray-600 text-sm mb-3">From Southern Groves</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary-600 font-bold">$7.99 / kg</span>
+                                    <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="swiper-pagination mt-6"></div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Farmer Callout -->
+    <section class="py-16 bg-primary-50">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-2/3 p-10 md:p-16">
+                        <h2 class="text-3xl font-bold mb-6">Are you a farmer?</h2>
+                        <p class="text-gray-700 text-lg mb-8">Join our platform to reach customers directly, get fair prices for your produce, and access AI-powered farming insights.</p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="#" class="bg-primary-600 text-white px-6 py-4 rounded-full font-medium hover:bg-primary-700 transition shadow-lg text-center">Start Selling Today</a>
+                            <a href="#" class="bg-white border-2 border-primary-600 text-primary-600 px-6 py-4 rounded-full font-medium hover:bg-primary-50 transition text-center">Learn More</a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/3 bg-gray-100 flex items-center justify-center p-10">
+                        <img src="https://images.unsplash.com/photo-1621839673705-661a74484f51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Farmer using technology" class="rounded-2xl shadow-md">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-primary-900 text-white pt-16 pb-10">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <span class="text-primary-400 mr-2">
+                            <i class="fas fa-leaf text-2xl"></i>
+                        </span>
+                        <span class="font-bold text-xl">FarmConnect<span class="text-primary-400">AI</span></span>
+                    </div>
+                    <p class="text-primary-200 mb-6">Connecting Western Bekaa farmers directly with consumers through technology and innovation.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Marketplace</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">All Products</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Vegetables</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Fruits</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Dairy & Eggs</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Organic</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">For Farmers</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Sell on FarmConnect</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">AI Tools</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Weather Insights</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Resources</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Success Stories</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Stay Updated</h3>
+                    <p class="text-primary-200 mb-4">Subscribe to our newsletter for the latest updates and offers.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="flex-grow bg-white/10 border border-primary-700 rounded-l-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary-400 placeholder-primary-300">
+                        <button type="submit" class="bg-primary-600 text-white py-3 px-4 rounded-r-lg hover:bg-primary-700 transition">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="pt-10 border-t border-primary-800 text-center text-primary-300 text-sm">
+                <p>© 2023 FarmConnect AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Mobile Filters Panel -->
+    <div x-show="mobileFiltersOpen" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-black/30" aria-hidden="true" @click="mobileFiltersOpen = false"></div>
+        
+        <div class="relative bg-white w-80 max-w-full h-full ml-auto shadow-xl">
+            <div class="p-6 h-full overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Filters</h2>
+                    <button @click="mobileFiltersOpen = false">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Categories -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Categories</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Vegetables</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" checked>
+                            <span class="ml-2">Fruits</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Dairy & Eggs</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Herbs</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">Grains</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Price Range -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Price Range</h3>
+                    <div id="mobile-price-slider" class="mb-4 h-2"></div>
+                    <div class="flex justify-between text-sm">
+                        <span>$2</span>
+                        <span>$25</span>
+                    </div>
+                </div>
+                
+                <!-- Location -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Location</h3>
+                    <select class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500">
+                        <option>All Regions</option>
+                        <option>Western Bekaa</option>
+                        <option>Central Bekaa</option>
+                        <option>Nearby Areas</option>
+                    </select>
+                </div>
+                
+                <!-- Availability -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Availability</h3>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" checked>
+                        <span class="ml-2">In Stock</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                        <span class="ml-2">Pre-order</span>
+                    </label>
+                </div>
+                
+                <!-- Organic -->
+                <div class="filter-section mb-6">
+                    <h3 class="font-semibold mb-3">Certifications</h3>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                        <span class="ml-2">Organic</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                        <span class="ml-2">Local Farm</span>
+                    </label>
+                </div>
+                
+                <div class="sticky bottom-0 bg-white pt-4 pb-6">
+                    <button class="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition">Apply Filters</button>
+                    <button class="w-full mt-3 text-gray-600 py-3 rounded-lg hover:text-gray-800 transition">Reset Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick View Modal -->
+    <div x-show="quickViewOpen" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-black/30" aria-hidden="true" @click="quickViewOpen = false"></div>
+        
+        <div class="relative bg-white max-w-4xl mx-auto my-8 rounded-2xl shadow-2xl overflow-hidden">
+            <button class="absolute top-4 right-4 z-10 bg-white/80 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition" @click="quickViewOpen = false">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2">
+                    <!-- Swiper Product Gallery -->
+                    <div class="swiper product-gallery h-64 md:h-full">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img src="https://images.unsplash.com/photo-1561136594-7f68413baa99?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover">
+                            </div>
+                            <div class="swiper-slide">
+                                <img src="https://images.unsplash.com/photo-1574856344991-aaa31b6f4ce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2 p-6 md:p-8">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                            <i class="fas fa-leaf mr-1 text-xs"></i> ORGANIC
+                        </span>
+                        <span class="bg-primary-600 text-white text-xs px-2 py-1 rounded-full ml-2">NEW</span>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold mb-2">Organic Tomatoes</h2>
+                    <p class="text-gray-600 mb-4">From Al-Amine Farm • Western Bekaa</p>
+                    
+                    <div class="flex items-center mb-6">
+                        <div class="flex text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-gray-600">4.5 (128 reviews)</span>
+                    </div>
+                    
+                    <p class="text-3xl font-bold text-primary-600 mb-6">$3.99 <span class="text-lg text-gray-600">/ kg</span></p>
+                    
+                    <p class="text-gray-700 mb-6">Freshly harvested organic tomatoes from our family farm in Western Bekaa. Grown without pesticides and harvested at peak ripeness for maximum flavor.</p>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-semibold mb-2">Farm Information</h3>
+                        <p class="text-gray-700">Al-Amine Farm has been practicing sustainable agriculture for over 20 years. All our produce is certified organic and grown with respect for the environment.</p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-weight text-gray-600 mr-2"></i>
+                            <span>Approx. 0.2kg per piece</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            <span>In Stock</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <div class="flex items-center border rounded-lg">
+                            <button class="px-4 py-2 text-gray-600">-</button>
+                            <span class="px-4">1</span>
+                            <button class="px-4 py-2 text-gray-600">+</button>
+                        </div>
+                        <button class="flex-grow bg-primary-600 text-white py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize price sliders
+        document.addEventListener('DOMContentLoaded', function() {
+            // Desktop price slider
+            const priceSlider = document.getElementById('price-slider');
+            if (priceSlider) {
+                noUiSlider.create(priceSlider, {
+                    start: [2, 25],
+                    connect: true,
+                    range: {
+                        'min': 0,
+                        'max': 50
+                    },
+                    step: 1
+                });
+            }
+            
+            // Mobile price slider
+            const mobilePriceSlider = document.getElementById('mobile-price-slider');
+            if (mobilePriceSlider) {
+                noUiSlider.create(mobilePriceSlider, {
+                    start: [2, 25],
+                    connect: true,
+                    range: {
+                        'min': 0,
+                        'max': 50
+                    },
+                    step: 1
+                });
+            }
+            
+            // Initialize recommended products swiper
+            const recommendedSwiper = new Swiper('.recommended-swiper', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                    },
+                    1024: {
+                        slidesPerView: 3,
+                    },
+                    1280: {
+                        slidesPerView: 4,
+                    },
+                }
+            });
+            
+            // Initialize product gallery swiper
+            const productGallerySwiper = new Swiper('.product-gallery', {
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        });
+    </script>
+</body>
+</html>

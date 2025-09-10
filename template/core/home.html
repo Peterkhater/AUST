@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmConnect AI - Fresh Produce Direct from Farmers</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            400: '#a8a29e',
+                            500: '#78716c',
+                            600: '#57534e',
+                            700: '#44403c',
+                            800: '#292524',
+                            900: '#1c1917',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.7s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-delay-1 { animation-delay: 0.2s; }
+        .animate-delay-2 { animation-delay: 0.4s; }
+        .animate-delay-3 { animation-delay: 0.6s; }
+        
+        /* Gradient backgrounds */
+        .hero-gradient {
+            background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%);
+        }
+        
+        .cta-gradient {
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+        }
+        
+        /* Card hover effects */
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 antialiased">
+    <!-- Navigation -->
+    {% comment %} <nav class="fixed w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm py-4">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                <span class="text-primary-600">
+                    <i class="fas fa-leaf text-2xl"></i>
+                </span>
+                <span class="font-bold text-xl text-primary-800">FarmConnect<span class="text-primary-600">AI</span></span>
+            </a>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#" class="text-primary-700 font-medium hover:text-primary-500 transition">Home</a>
+                <a href="{%url 'products'%}" class="text-gray-600 hover:text-primary-500 transition">Marketplace</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">For Farmers</a>
+                <a href="{%url 'weather'%}" class="text-gray-600 hover:text-primary-500 transition">Weather Tools</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">About</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="hidden md:block text-gray-600 hover:text-primary-600 transition">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="hidden md:block text-gray-600 hover:text-primary-600 transition">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+                {% if user.is_authenticated %}
+                <a href="{%url 'account_logout'%}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">logout</a>
+                {% else %}
+                <a href="{%url 'account_login'%}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">SignIn</a>
+                <a href="{%url 'account_signup'%}" class="bg-white-600 text-primary-600 px-4 py-2 rounded-full hover:bg-primary-700 hover:text-white transition shadow-md border-primary-600">SignUp</a>
+                {% endif %}
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav> {% endcomment %}
+    
+    {% include "core/base.html" %}
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 hero-gradient text-white">
+        <div class="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-slide-up opacity-0">Fresh Produce, Straight from the Farmers</h1>
+                <p class="text-xl mb-8 text-primary-100 animate-slide-up opacity-0 animate-delay-1">Bringing Western Bekaa's harvest directly to your table — fair, fresh, and sustainable.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 animate-slide-up opacity-0 animate-delay-2">
+                    <a href="#" class="bg-white text-primary-700 px-6 py-4 rounded-full font-medium hover:bg-gray-100 transition shadow-lg text-center">Shop Now</a>
+                    <a href="#" class="bg-transparent border-2 border-white text-white px-6 py-4 rounded-full font-medium hover:bg-white/10 transition text-center">For Farmers</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center animate-float">
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-primary-400/30 rounded-2xl blur-lg"></div>
+                    <img src="https://images.unsplash.com/photo-1574856344991-aaa31b6f4ce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Fresh vegetables from farm" class="rounded-2xl shadow-2xl relative">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">How We're Transforming Agriculture</h2>
+                <p class="text-gray-600">Empowering farmers and consumers through technology and direct connection</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-tractor text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Direct from Farmers</h3>
+                    <p class="text-gray-600">Connect directly with local farmers, eliminating middlemen and ensuring fair prices.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-cloud-sun text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">AI Weather Insights</h3>
+                    <p class="text-gray-600">Advanced forecasting to help farmers plan and optimize their harvest cycles.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-magic text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Smart Recommendations</h3>
+                    <p class="text-gray-600">Personalized suggestions based on your preferences and seasonal availability.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-check text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Secure Transactions</h3>
+                    <p class="text-gray-600">Safe and reliable payment processing with multiple options for convenience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Marketplace Preview -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">This Week's Fresh Picks</h2>
+                <a href="#" class="text-primary-600 font-medium hover:text-primary-800 transition flex items-center">
+                    View all <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1561136594-7f68413baa99?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Organic Tomatoes" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Organic Tomatoes</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Al-Amine Farm</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$3.99 / kg</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1603052875180-e1e10e5a0b36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Fresh Cucumbers" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Fresh Cucumbers</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Bekaa Valley Greens</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$2.49 / kg</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1603278661081-8e1755c3b973?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Sweet Strawberries" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Sweet Strawberries</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Jounieh Berries</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$5.99 / box</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="h-48 bg-gray-200 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1604322824011-8375a55d7d12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Organic Lettuce" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-lg mb-1">Organic Lettuce</h3>
+                        <p class="text-gray-600 text-sm mb-3">From Green Fields Co-op</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-600 font-bold">$2.99 / piece</span>
+                            <button class="bg-primary-50 text-primary-600 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-100 transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Weather & Advice Highlight -->
+    <section class="py-20 bg-primary-50">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 p-10">
+                        <h2 class="text-3xl font-bold mb-6 text-gray-800">Today in Western Bekaa</h2>
+                        <div class="flex items-center mb-6">
+                            <i class="fas fa-sun text-5xl text-yellow-500 mr-4"></i>
+                            <div>
+                                <p class="text-4xl font-bold">27°C</p>
+                                <p class="text-gray-600">Sunny with clear skies</p>
+                            </div>
+                        </div>
+                        <p class="text-lg mb-8 text-gray-700 border-l-4 border-primary-500 pl-4">Perfect weather for tomato harvesting. Ideal conditions with moderate humidity and plenty of sunlight.</p>
+                        <a href="#" class="cta-gradient text-white px-6 py-3 rounded-full font-medium inline-flex items-center hover:shadow-lg transition">
+                            Check Full Weather Tools <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-100 flex items-center justify-center p-10">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d425000.10711377574!2d36.18394347425582!3d33.674949926525365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1518cacdb2966a67%3A0x4e6313c6fdd6398f!2z2YXYrdin2YHYuNipINin2YTYqNmC2KfYuQ!5e0!3m2!1sar!2slb!4v1757491235327!5m2!1sar!2slb" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">How FarmConnect Works</h2>
+                <p class="text-gray-600">A seamless process from farm to table</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center text-center mb-10 md:mb-0 md:w-1/3 px-6">
+                    <div class="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-seedling text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">1. Farmer Lists Produce</h3>
+                    <p class="text-gray-600">Farmers easily list their fresh harvest with our simple dashboard tools.</p>
+                </div>
+                
+                <!-- Connector -->
+                <div class="hidden md:block flex-1 h-1 bg-primary-200 mx-4 relative">
+                    <div class="absolute -top-2 left-0 w-full flex justify-between">
+                        <div class="w-4 h-4 bg-primary-400 rounded-full"></div>
+                        <div class="w-4 h-4 bg-primary-400 rounded-full"></div>
+                        <div class="w-4 h-4 bg-primary-400 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center text-center mb-10 md:mb-0 md:w-1/3 px-6">
+                    <div class="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-shopping-cart text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">2. Consumer Orders</h3>
+                    <p class="text-gray-600">Customers browse, select, and order fresh produce directly from local farms.</p>
+                </div>
+                
+                <!-- Connector -->
+                <div class="hidden md:block flex-1 h-1 bg-primary-200 mx-4 relative">
+                    <div class="absolute -top-2 left-0 w-full flex justify-between">
+                        <div class="w-4 h-4 bg-primary-400 rounded-full"></div>
+                        <div class="w-4 h-4 bg-primary-400 rounded-full"></div>
+                        <div class="w-4 h-4 bg-primary-400 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center text-center md:w-1/3 px-6">
+                    <div class="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-truck text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">3. Direct Delivery</h3>
+                    <p class="text-gray-600">Fresh produce is delivered directly to your doorstep within hours of harvest.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- For Farmers Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="bg-primary-800 text-white rounded-2xl overflow-hidden shadow-xl">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 p-10 md:p-16">
+                        <h2 class="text-3xl font-bold mb-6">For Farmers</h2>
+                        <p class="text-primary-100 text-lg mb-8">Empower your farm with AI-driven insights, fair pricing, and direct access to consumers. Join our growing community of Western Bekaa farmers.</p>
+                        <ul class="space-y-4 mb-10">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-primary-300 mt-1 mr-3"></i>
+                                <span>AI-powered crop recommendations and weather insights</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-primary-300 mt-1 mr-3"></i>
+                                <span>Direct marketplace with no middlemen</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-primary-300 mt-1 mr-3"></i>
+                                <span>Fair pricing and transparent transactions</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="bg-white text-primary-700 px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition shadow-lg inline-flex items-center">
+                            Join as Farmer <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-100 flex items-center justify-center p-10">
+                        <img src="https://images.unsplash.com/photo-1621839673705-661a74484f51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Farmer using technology" class="rounded-2xl shadow-md">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer CTA -->
+    <footer class="bg-primary-900 text-white pt-16 pb-10">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Stay Updated on Fresh Produce & AI Farming Tools</h2>
+                <p class="text-primary-200 mb-8">Subscribe to our newsletter for the latest updates, seasonal offerings, and agricultural insights.</p>
+                
+                <form class="flex flex-col sm:flex-row max-w-md mx-auto sm:mx-0 sm:max-w-2xl">
+                    <input type="email" placeholder="Your email address" class="flex-grow bg-white/10 border border-primary-700 rounded-full py-4 px-6 mb-3 sm:mb-0 sm:mr-3 focus:outline-none focus:ring-2 focus:ring-primary-400 placeholder-primary-300">
+                    <button type="submit" class="cta-gradient text-white font-medium py-4 px-8 rounded-full hover:shadow-lg transition whitespace-nowrap">Subscribe Now</button>
+                </form>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center pt-10 border-t border-primary-800">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <span class="text-primary-400 mr-2">
+                        <i class="fas fa-leaf text-2xl"></i>
+                    </span>
+                    <span class="font-bold text-xl">FarmConnect<span class="text-primary-400">AI</span></span>
+                </div>
+                
+                <div class="flex space-x-6 mb-6 md:mb-0">
+                    <a href="#" class="text-primary-300 hover:text-white transition">
+                        <i class="fab fa-facebook-f text-lg"></i>
+                    </a>
+                    <a href="#" class="text-primary-300 hover:text-white transition">
+                        <i class="fab fa-instagram text-lg"></i>
+                    </a>
+                    <a href="#" class="text-primary-300 hover:text-white transition">
+                        <i class="fab fa-twitter text-lg"></i>
+                    </a>
+                    <a href="#" class="text-primary-300 hover:text-white transition">
+                        <i class="fab fa-whatsapp text-lg"></i>
+                    </a>
+                </div>
+                
+                <div class="text-primary-300 text-sm">
+                    <p>© 2023 FarmConnect AI. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-700 transition opacity-0">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <script>
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0');
+                backToTopButton.classList.add('opacity-100');
+            } else {
+                backToTopButton.classList.remove('opacity-100');
+                backToTopButton.classList.add('opacity-0');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Simple animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.animate-slide-up');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

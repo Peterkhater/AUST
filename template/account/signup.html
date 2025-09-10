@@ -1,0 +1,291 @@
+{% load i18n %}
+{% load widget_tweaks %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Your Application</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reuse the same CSS as in login.html */
+        :root {
+            /* --gradient-start: #f47137; */
+            --gradient-start:rgba(20, 83, 45, 0.9) ;
+            --primary-color: #f471371a;
+            --gradient-end: rgba(101, 163, 13, 0.8);
+            --text-dark: #2c2724;
+            --text-light: #6c757d;
+            --light-bg: #fff9f5;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-dark);
+        }
+        .login-container { max-width: 600px; width: 100%; margin: 0 auto; }
+        .login-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+        .login-card:hover { transform: translateY(-5px); }
+        .login-header { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: white; padding: 30px; text-align: center; }
+        .login-header h2 { font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 10px; }
+        .login-body { padding: 30px; }
+        .form-label { font-weight: 500; margin-bottom: 8px; color: var(--text-dark);font-size: small; }
+        .form-control { padding: 12px 16px; border-radius: 8px; border: 1px solid #d1d5db; transition: all 0.3s; }
+        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        .input-group-text { background: white; border-radius: 8px 0 0 8px; border: 1px solid #d1d5db; border-right: none; }
+        .password-toggle { cursor: pointer; background: white; border: 1px solid #d1d5db; border-left: none; border-radius: 0 8px 8px 0; }
+        .btn-login { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border: none; padding: 12px; font-weight: 600; border-radius: 8px; transition: all 0.3s; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+        .divider { display: flex; align-items: center; margin: 25px 0; color: var(--text-light); }
+        .divider::before, .divider::after { content: ""; flex: 1; border-bottom: 1px solid #e5e7eb; }
+        .divider span { padding: 0 15px; font-size: 14px; }
+        .social-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; transition: all 0.3s; text-decoration: none; color: inherit; }
+        .social-btn:hover { background: #f9fafb; transform: translateY(-2px); }
+        .login-footer { text-align: center; padding: 20px 0 0; font-size: 14px; color: var(--text-light); }
+        .login-footer a { color: var(--gradient-start); text-decoration: none; font-weight: 500; }
+        .login-footer a:hover { text-decoration: underline; }
+        .text-danger { font-size: 14px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Create Account</h2>
+            <p>Sign up to get started</p>
+        </div>
+
+        <div class="login-body">
+
+            <form method="POST" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Username -->
+                {% if form.username %}
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        {{ form.username|add_class:"form-control" }}
+                    </div>
+                    {% if form.username.errors %}
+                        <div class="text-danger">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Email -->
+                {% if form.email %}
+                <div class="mb-4">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        {{ form.email|add_class:"form-control" }}
+                    </div>
+                    {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Password1 -->
+                <div class="mb-4">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        {{ form.password1|add_class:"form-control" }}
+                        <span class="input-group-text password-toggle" onclick="togglePassword('id_password1', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    {% if form.password1.errors %}
+                        <div class="text-danger">{{ form.password1.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Password2 -->
+                <div class="mb-4">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        {{ form.password2|add_class:"form-control" }}
+                        <span class="input-group-text password-toggle" onclick="togglePassword('id_password2', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    {% if form.password2.errors %}
+                        <div class="text-danger">{{ form.password2.errors }}</div>
+                    {% endif %}
+                </div>
+
+            
+                <!-- First Name -->
+            <div class="row">
+                <div class="mb-4 col">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="text-danger">{{ form.first_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Last Name -->
+                <div class="mb-4 col">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="text-danger">{{ form.last_name.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+                <!-- Role -->
+                <div class="mb-4">
+                    <label for="{{ form.role.id_for_label }}" class="form-label">Role</label>
+                    {{ form.role }}
+                    {% if form.role.errors %}
+                        <div class="text-danger">{{ form.role.errors }}</div>
+                    {% endif %}
+                </div> 
+                
+
+                <!-- country -->
+                <div class="mb-4">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+
+                    {{ form.country }}
+                    {% if form.country.errors %}
+                        <div class="text-danger">{{ form.country.errors }}</div>
+                    {% endif %}
+                </div>
+              
+               
+                <div class="row">
+                    <div class="mb-4 col">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">governorate</label>
+
+                    {{ form.governorate }}
+                    {% if form.governorate.errors %}
+                        <div class="text-danger">{{ form.governorate.errors }}</div>
+                    {% endif %}
+                    </div>
+
+                    <div class="mb-4 col">
+                        <label for="{{ form.country.id_for_label }}" class="form-label">Village/City</label>
+
+                        {{ form.city_village }}
+                        {% if form.city_village.errors %}
+                            <div class="text-danger">{{ form.city_village.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <button style="background-color: transparent; border: none; margin-bottom: 10px; color: blue; font-size: small;" onclick="getLocation()" type="button"><i class="fa-solid fa-location-dot"></i> Get Your Location</button>
+                
+
+                {{ form.latitude }} {{ form.longitude }}
+
+                <!-- Redirect hidden input -->
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                {% endif %}
+
+                <!-- Submit Button -->
+                <div class="d-grid mb-4">
+                    <button type="submit" class="btn btn-login btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Sign Up
+                    </button>
+                </div>
+
+            </form>
+
+            
+
+            <div class="login-footer">
+                {% url 'account_login' as login_url %}
+                <p>
+                    {% trans "Already have an account?" %}
+                    <a href="{{ login_url }}">Sign In</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle password visibility for signup form
+    function togglePassword(inputId, el) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleIcon = el.querySelector('i');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+    
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            setLocation,
+            handleError
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+function setLocation(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    // Optional: Fill hidden inputs or show the address using reverse geocoding
+    document.getElementById("id_latitude").value = lat;
+    document.getElementById("id_longitude").value = lon;
+// Optional: Reverse geocode using OpenStreetMap to fill address
+
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`)
+  .then(res => res.json())
+  .then(data => {
+      document.getElementById("id_country").value = data.address.country || '';
+      document.getElementById("id_governorate").value = data.address.state || '';
+      document.getElementById("id_city_village").value = data.address.village || data.address.town || data.address.city || '';
+  });
+}
+
+function handleError(error) {
+    console.error(error);
+    alert("Could not get location. Please enter manually.");
+}
+
+// Call getLocation on page load or button click
+// window.onload = getLocation;
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - FarmConnect AI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Dropzone for file uploads -->
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            400: '#a8a29e',
+                            500: '#78716c',
+                            600: '#57534e',
+                            700: '#44403c',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        accent: {
+                            DEFAULT: '#F47137',
+                            50: '#fef4eb',
+                            100: '#fde6d2',
+                            200: '#fac9a5',
+                            300: '#f7a36d',
+                            400: '#f47137',
+                            500: '#f1531a',
+                            600: '#e23810',
+                            700: '#bb2810',
+                            800: '#962214',
+                            900: '#791f14',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.7s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-delay-1 { animation-delay: 0.2s; }
+        .animate-delay-2 { animation-delay: 0.4s; }
+        .animate-delay-3 { animation-delay: 0.6s; }
+        
+        /* Gradient backgrounds */
+        .hero-gradient {
+            background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%);
+        }
+        
+        .cta-gradient {
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Form styling */
+        .form-input {
+            /* @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition; */
+            border:2px solid grey;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .form-label {
+            @apply block text-sm font-medium text-gray-700 mb-2;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+        
+        /* Dropzone customization */
+        .dropzone {
+            @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer transition;
+        }
+        
+        .dropzone:hover {
+            @apply border-primary-500 bg-primary-50;
+        }
+        
+        .dz-preview {
+            @apply inline-block m-2 relative;
+        }
+        
+        .dz-image {
+            @apply rounded-lg w-24 h-24 bg-cover bg-center;
+        }
+        
+        .dz-details {
+            @apply hidden;
+        }
+        
+        .dz-success-mark, .dz-error-mark {
+            @apply hidden;
+        }
+        
+        /* Toggle switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #16a34a;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased" x-data="{ 
+        currentStep: 1, 
+        totalSteps: 3,
+        productData: {
+            name: '',
+            description: '',
+            image1:'',
+            category: '',
+            shelf_life:{
+                day_or_week_count: '',
+                day_or_week:'',
+            },
+            is_local_farm: false,
+            isNon_gmo: false,
+            isOrganic: false,
+            price:'',
+            harvestDate: '',
+            quantity: '',
+            images: [],
+            pricingModel: 'perKg'
+        },
+     }">
+    <!-- Navigation -->
+    <nav class="sticky top-0 w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm py-4">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                <span class="text-primary-600">
+                    <i class="fas fa-leaf text-2xl"></i>
+                </span>
+                <span class="font-bold text-xl text-primary-800">FarmConnect<span class="text-primary-600">AI</span></span>
+            </a>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Home</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Marketplace</a>
+                <a href="#" class="text-primary-700 font-medium hover:text-primary-500 transition">For Farmers</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Weather Tools</a>
+                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Dashboard</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-600 hover:text-primary-600 transition">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <div class="hidden md:flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-primary-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Farmer John</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Progress Bar -->
+    <div class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 md:px-6 py-4">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-primary-600" x-text="`Step ${currentStep} of ${totalSteps}`"></span>
+                <span class="text-sm font-medium text-gray-500" x-text="currentStep === 1 ? 'Basic Information' : currentStep === 2 ? 'Pricing & Inventory' : 'Review & Submit'"></span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-primary-600 h-2 rounded-full transition-all duration-500" 
+                     :style="`width: ${(currentStep / totalSteps) * 100}%`"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 md:px-6 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+                <!-- Step 1: Basic Information -->
+                <div x-show="currentStep === 1" class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Product Information</h2>
+                    <p class="text-gray-600 mb-8">Start by providing basic information about your product.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="form-label">Product Name *</label>
+                            <input type="text" class="form-input" placeholder="e.g., Organic Tomatoes" x-model="productData.name">
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Category *</label>
+                            <select class="form-input" x-model="productData.category">
+                                <option value="">Select a category</option>
+                                <option value="vegetables">Vegetables</option>
+                                <option value="fruits">Fruits</option>
+                                <option value="dairy">Dairy & Eggs</option>
+                                <option value="herbs">Herbs</option>
+                                <option value="grains">Grains</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <label class="form-label">Product Description *</label>
+                        <textarea class="form-input h-32" placeholder="Describe your product in detail..." x-model="productData.description"></textarea>
+                        <p class="text-sm text-gray-500 mt-2">Mention quality, freshness, and any special farming practices.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="form-label">Harvest Date *</label>
+                            <input type="date" class="form-input" x-model="productData.harvestDate">
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Shelf Life</label>
+                            <div class="flex">
+                                <input type="number" class="form-input rounded-r-none" placeholder="e.g., 7" x-model="productData.shelf_life.day_or_week_count">
+                                <select class="form-input rounded-l-none border-l-0 w-32" x-model="productData.shelf_life.day_or_week">
+                                    <option>Days</option>
+                                    <option>Weeks</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <label class="form-label">Certifications</label>
+                        <div class="flex flex-wrap gap-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.isOrganic">
+                                <span class="ml-2">Organic</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.isNon_gmo">
+                                <span class="ml-2">Non-GMO</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.is_local_farm">
+                                <span class="ml-2">Local Farm</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button class="cta-gradient text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition" @click="currentStep = 2">
+                            Next: Pricing & Inventory <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Pricing & Inventory -->
+                <div x-show="currentStep === 2" class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Pricing & Inventory</h2>
+                    <p class="text-gray-600 mb-8">Set your pricing and inventory details.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="form-label">Pricing Model *</label>
+                            <div class="flex border border-gray-300 rounded-lg overflow-hidden">
+                                <button class="flex-1 py-3 px-4 text-center" 
+                                        :class="productData.pricingModel === 'perKg' ? 'bg-primary-600 text-white' : 'bg-white text-gray-700'"
+                                        @click="productData.pricingModel = 'perKg'">
+                                    Per Kg
+                                </button>
+                                <button class="flex-1 py-3 px-4 text-center border-l border-gray-300"
+                                        :class="productData.pricingModel === 'perUnit' ? 'bg-primary-600 text-white' : 'bg-white text-gray-700'"
+                                        @click="productData.pricingModel = 'perUnit'">
+                                    Per Unit
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" x-text="productData.pricingModel === 'perKg' ? 'Price per Kg *' : 'Price per Unit *'"></label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+                                <input type="number" step="0.01" class="form-input pl-8" placeholder="0.00" x-model="productData.price">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="form-label">Available Quantity *</label>
+                            <input type="number" class="form-input" placeholder="e.g., 100" x-model="productData.quantity">
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Minimum Order</label>
+                            <input type="number" class="form-input" placeholder="e.g., 1">
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div class="flex justify-between">
+                        <button class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition" @click="currentStep = 1">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="cta-gradient text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition" @click="currentStep = 3">
+                            Next: Review & Submit <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Review & Submit -->
+                <div x-show="currentStep === 3" class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Review & Submit</h2>
+                    <p class="text-gray-600 mb-8">Review your product information before publishing.</p>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                        <h3 class="text-lg font-semibold mb-4">Product Preview</h3>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <div class="md:w-1/3">
+                                    <div class="h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                                        <i class="fas fa-image text-4xl"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="md:w-2/3">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h4 class="text-xl font-semibold" x-text="productData.name"></h4>
+                                            <p class="text-gray-600 mb-2">From Your Farm</p>
+                                            <div class="flex items-center mb-4">
+                                                <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center mr-2">
+                                                    <i class="fas fa-leaf mr-1 text-xs"></i> ORGANIC
+                                                </span>
+                                                <span class="text-xs text-gray-500">Harvested: <span x-text="productData.harvestDate || 'Not specified'"></span></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="container" style="display: flex;">
+                                        <p class="font-bold text-primary-600" x-text="productData.price + '$'" style="margin: 0; padding: 0;"></p><span x-text="productData.pricingModel === 'perKg' ? '/kg' : '/unit'" style="margin: 0; padding: 0;"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-700 mb-4" x-text="productData.description || 'not specified'"></p>
+                                    
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                        <div class="container" style="display: flex;">
+                                        <span>In stock:</span><span x-text="productData.quantity"></span>
+                                        <span x-text="productData.pricingModel === 'perKg' ? 'kg' : 'unit'" style="padding: 2px;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold mb-4">AI Recommendations</h3>
+                        <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-robot text-primary-600 text-xl mt-1 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-primary-800">Based on current market trends, we recommend:</p>
+                                    <ul class="mt-2 space-y-1 text-primary-700">
+                                        <li><i class="fas fa-lightbulb mr-2"></i> Pricing your tomatoes between $3.50-$4.20/kg for optimal sales</li>
+                                        <li><i class="fas fa-lightbulb mr-2"></i> Adding more images from different angles to increase engagement by 25%</li>
+                                        <li><i class="fas fa-lightbulb mr-2"></i> Using keywords like "vine-ripened" and "pesticide-free" in your description</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center mb-8">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                            <span class="ml-2">I agree to the <a href="#" class="text-primary-600 hover:underline">terms and conditions</a></span>
+                        </label>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition" @click="currentStep = 2">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="cta-gradient text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition flex items-center">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i> Publish Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Image Upload Section (Present on all steps) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+                <div class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Product Images</h2>
+                    <p class="text-gray-600 mb-8">Upload high-quality images of your product. The first image will be used as the main display image.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Main Image -->
+                        <div class="border-2 border-dashed border-primary-500 rounded-lg p-4 text-center bg-primary-50">
+                            <div class="h-40 bg-gray-200 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-camera text-3xl text-gray-400"></i>
+                            </div>
+                            <p class="font-medium text-primary-700">Main Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Recommended: 800×800px</p>
+                            <div class="mt-4 text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                <input type="file" name="" id="">
+                                <!-- <i class="fas fa-upload mr-1"></i> Upload -->
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Images -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
+                            <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-plus text-2xl text-gray-400"></i>
+                            </div>
+                            <p class="font-medium">Additional Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Show different angles</p>
+                        </div>
+                        
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
+                            <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-plus text-2xl text-gray-400"></i>
+                            </div>
+                            <p class="font-medium">Additional Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Show different angles</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <label class="form-label">Or drag and drop your images here</label>
+                        <div class="dropzone" id="productImageDropzone">
+                            <div class="dz-message needsclick">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <h3 class="text-lg font-medium text-gray-700">Drop files here or click to upload</h3>
+                                <span class="text-sm text-gray-500">PNG, JPG, GIF up to 10MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Insights Panel -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">AI Insights <i class="fas fa-robot text-primary-600"></i></h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-primary-50 p-6 rounded-lg">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <i class="fas fa-cloud-sun text-primary-600 mr-2"></i> Weather Impact
+                            </h3>
+                            <p class="text-primary-700">Current conditions are optimal for tomatoes. Expect high buyer demand this week.</p>
+                        </div>
+                        
+                        <div class="bg-green-50 p-6 rounded-lg">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <i class="fas fa-chart-line text-green-600 mr-2"></i> Market Trends
+                            </h3>
+                            <p class="text-green-700">Tomato prices have increased by 12% in your region over the past 2 weeks.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 bg-blue-50 p-6 rounded-lg">
+                        <h3 class="font-semibold mb-3 flex items-center">
+                            <i class="fas fa-lightbulb text-blue-600 mr-2"></i> Smart Suggestions
+                        </h3>
+                        <ul class="space-y-2 text-blue-700">
+                            <li><i class="fas fa-check-circle mr-2"></i> Consider offering bulk discounts for orders over 5kg</li>
+                            <li><i class="fas fa-check-circle mr-2"></i> Harvest in the early morning for maximum freshness</li>
+                            <li><i class="fas fa-check-circle mr-2"></i> Use eco-friendly packaging to attract premium buyers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-primary-900 text-white pt-12 pb-10 mt-16">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <span class="text-primary-400 mr-2">
+                            <i class="fas fa-leaf text-2xl"></i>
+                        </span>
+                        <span class="font-bold text-xl">FarmConnect<span class="text-primary-400">AI</span></span>
+                    </div>
+                    <p class="text-primary-200 mb-6">Connecting Western Bekaa farmers directly with consumers through technology and innovation.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-primary-300 hover:text-white transition">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">For Farmers</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Sell on FarmConnect</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">AI Tools</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Weather Insights</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Resources</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Success Stories</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Help Center</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">FAQs</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Shipping & Delivery</a></li>
+                        <li><a href="#" class="text-primary-200 hover:text-white transition">Returns & Refunds</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Stay Updated</h3>
+                    <p class="text-primary-200 mb-4">Subscribe to our newsletter for farming tips and updates.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="flex-grow bg-white/10 border border-primary-700 rounded-l-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary-400 placeholder-primary-300">
+                        <button type="submit" class="bg-primary-600 text-white py-3 px-4 rounded-r-lg hover:bg-primary-700 transition">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="pt-10 border-t border-primary-800 text-center text-primary-300 text-sm">
+                <p>© 2023 FarmConnect AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Dropzone
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Dropzone
+            Dropzone.autoDiscover = false;
+            const myDropzone = new Dropzone("#productImageDropzone", {
+                url: "#", // Set your upload URL here
+                maxFilesize: 10, // MB
+                acceptedFiles: "image/*",
+                addRemoveLinks: true,
+                dictRemoveFile: "Remove",
+                dictDefaultMessage: "<i class='fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2'></i><h3 class='text-lg font-medium text-gray-700'>Drop files here or click to upload</h3><span class='text-sm text-gray-500'>PNG, JPG, GIF up to 10MB</span>",
+                dictInvalidFileType: "Invalid file type. Only images are allowed.",
+            });
+        });
+    </script>
+</body>
+</html>

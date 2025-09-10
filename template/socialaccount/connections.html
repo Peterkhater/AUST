@@ -1,0 +1,72 @@
+{% extends "account/base.html" %}
+{% load i18n static allauth %}
+{% load i18n %}
+{% load socialaccount %}
+{% load allauth %}
+
+{% block head_title %}
+    {% trans "Account Connections" %}
+{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+    /* Login page styles reused */
+    .login-container { max-width: 500px; margin: 20px auto; }
+    .login-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .login-header { background: linear-gradient(135deg, #f47137, #fecc49); color: white; padding: 30px; text-align: center; }
+    .login-header h2 { font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 10px; }
+    .login-header p { opacity: 0.9; margin-bottom: 0; }
+    .login-body { padding: 30px; }
+    .btn-login { background: linear-gradient(135deg, #f47137, #fecc49); border: none; padding: 12px; font-weight: 600; border-radius: 8px; transition: all 0.3s; color: white; }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79,70,229,0.25); }
+    .card-section { margin-bottom: 20px; }
+    .account-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .account-badge { font-size: 12px; padding: 3px 8px; border-radius: 12px; color: white; background: #6c757d; }
+    .account-badge.google { background: #db4437; }
+    .account-badge.facebook { background: #4267B2; }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>{% trans "Account Connections" %}</h2>
+            <p>{% trans "Manage your connected third-party accounts." %}</p>
+        </div>
+
+        <div class="login-body">
+
+            {% if form.accounts %}
+            <div class="card-section">
+                <p>{% trans "Connected accounts:" %}</p>
+                {% url 'socialaccount_connections' as action_url %}
+                <form method="post" action="{{ action_url }}">
+                    {% csrf_token %}
+                    {% for acc in form.fields.account.choices %}
+                        {% with account=acc.0.instance.get_provider_account %}
+                        <div class="account-item">
+                            <span>{{ account }}</span>
+                            <span class="account-badge {{ account.account.provider }}">{{ account.get_brand.name }}</span>
+                            <input type="radio" name="account" value="{{ account.account.pk }}">
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                    <button type="submit" class="btn-login mt-3">{% trans "Remove Selected Account" %}</button>
+                </form>
+            </div>
+            {% else %}
+                <div class="card-section">
+                    <p>{% trans "You currently have no third-party accounts connected to this account." %}</p>
+                </div>
+            {% endif %}
+
+            <div class="card-section">
+                <h4>{% trans "Add a Third-Party Account" %}</h4>
+                {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
