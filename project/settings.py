@@ -17,7 +17,8 @@ ALLOWED_HOSTS = ['192.168.1.26','127.0.0.1','aust.pythonanywhere.com']
 
 OPENWEATHER_API_KEY = config("OPENWEATHER_API_KEY")
 GROQ_API_KEY = config("GROQ_API_KEY")
-
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+OPENROUTER_API_KEY = config('OPENROUTER_API_KEY')
 
 # Application definition
 INSTALLED_APPS = [
@@ -151,6 +152,7 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True 
 LOGIN_REDIRECT_URL = '/'        
 LOGOUT_REDIRECT_URL = '/'       
+LOGIN_URL = '/users/accounts/login/'
 
 # SOCIALACCOUNT_PROVIDERS = {
 #     'google': {
@@ -175,5 +177,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'follow.software.engineer@gmail.com'       
-EMAIL_HOST_PASSWORD = 'hhzs beiy rqiv ipay'
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

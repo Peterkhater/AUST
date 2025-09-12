@@ -223,9 +223,11 @@
             name: '',
             description: '',
             image1:'',
+            image2:'',
+            image3:'',
             category: '',
             shelf_life:{
-                day_or_week_count: '',
+                day_or_week_count:0,
                 day_or_week:'',
             },
             is_local_farm: false,
@@ -235,7 +237,8 @@
             harvestDate: '',
             quantity: '',
             images: [],
-            pricingModel: 'perKg'
+            pricingModel: 'perKg',
+            min_order:'',
         },
      }">
     <!-- Navigation -->
@@ -296,12 +299,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
                             <label class="form-label">Product Name *</label>
-                            <input type="text" class="form-input" placeholder="e.g., Organic Tomatoes" x-model="productData.name">
+                            <input type="text" class="form-input" placeholder="e.g., Organic Tomatoes" x-model="productData.name" required>
                         </div>
                         
                         <div>
                             <label class="form-label">Category *</label>
-                            <select class="form-input" x-model="productData.category">
+                            <select class="form-input" x-model="productData.category" required>
                                 <option value="">Select a category</option>
                                 <option value="vegetables">Vegetables</option>
                                 <option value="fruits">Fruits</option>
@@ -314,21 +317,21 @@
                     
                     <div class="mb-8">
                         <label class="form-label">Product Description *</label>
-                        <textarea class="form-input h-32" placeholder="Describe your product in detail..." x-model="productData.description"></textarea>
+                        <textarea class="form-input h-32" placeholder="Describe your product in detail..." x-model="productData.description" required></textarea>
                         <p class="text-sm text-gray-500 mt-2">Mention quality, freshness, and any special farming practices.</p>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
                             <label class="form-label">Harvest Date *</label>
-                            <input type="date" class="form-input" x-model="productData.harvestDate">
+                            <input type="date" class="form-input" x-model="productData.harvestDate" required>
                         </div>
                         
                         <div>
                             <label class="form-label">Shelf Life</label>
                             <div class="flex">
-                                <input type="number" class="form-input rounded-r-none" placeholder="e.g., 7" x-model="productData.shelf_life.day_or_week_count">
-                                <select class="form-input rounded-l-none border-l-0 w-32" x-model="productData.shelf_life.day_or_week">
+                                <input type="number" class="form-input rounded-r-none" placeholder="e.g., 7" x-model="productData.shelf_life.day_or_week_count" required>
+                                <select class="form-input rounded-l-none border-l-0 w-32" x-model="productData.shelf_life.day_or_week" >
                                     <option>Days</option>
                                     <option>Weeks</option>
                                 </select>
@@ -340,15 +343,15 @@
                         <label class="form-label">Certifications</label>
                         <div class="flex flex-wrap gap-4">
                             <label class="flex items-center">
-                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.isOrganic">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.isOrganic" >
                                 <span class="ml-2">Organic</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.isNon_gmo">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.isNon_gmo" >
                                 <span class="ml-2">Non-GMO</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.is_local_farm">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500" x-model="productData.is_local_farm" >
                                 <span class="ml-2">Local Farm</span>
                             </label>
                         </div>
@@ -380,6 +383,7 @@
                                         @click="productData.pricingModel = 'perUnit'">
                                     Per Unit
                                 </button>
+                                
                             </div>
                         </div>
                         
@@ -387,7 +391,7 @@
                             <label class="form-label" x-text="productData.pricingModel === 'perKg' ? 'Price per Kg *' : 'Price per Unit *'"></label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
-                                <input type="number" step="0.01" class="form-input pl-8" placeholder="0.00" x-model="productData.price">
+                                <input type="number" step="0.01" class="form-input pl-8" placeholder="0.00" x-model="productData.price" required>
                             </div>
                         </div>
                     </div>
@@ -395,12 +399,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
                             <label class="form-label">Available Quantity *</label>
-                            <input type="number" class="form-input" placeholder="e.g., 100" x-model="productData.quantity">
+                            <input type="number" class="form-input" placeholder="e.g., 100" x-model="productData.quantity" required>
                         </div>
                         
                         <div>
                             <label class="form-label">Minimum Order</label>
-                            <input type="number" class="form-input" placeholder="e.g., 1">
+                            <input type="number" x-model="productData.min_order" class="form-input" placeholder="e.g., 1" required>
                         </div>
                     </div>
                     
@@ -489,24 +493,16 @@
                     </div>
                     
                     <div class="flex justify-between">
-                        <button class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition" @click="currentStep = 2">
-                            <i class="fas fa-arrow-left mr-2"></i> Back
-                        </button>
-                        <button class="cta-gradient text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition flex items-center">
-                            <i class="fas fa-cloud-upload-alt mr-2"></i> Publish Product
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Image Upload Section (Present on all steps) -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+                        
+        <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
                 <div class="p-8">
                     <h2 class="text-2xl font-bold mb-6">Product Images</h2>
                     <p class="text-gray-600 mb-8">Upload high-quality images of your product. The first image will be used as the main display image.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Main Image -->
+                        
                         <div class="border-2 border-dashed border-primary-500 rounded-lg p-4 text-center bg-primary-50">
                             <div class="h-40 bg-gray-200 rounded-lg flex items-center justify-center mb-4">
                                 <i class="fas fa-camera text-3xl text-gray-400"></i>
@@ -514,42 +510,102 @@
                             <p class="font-medium text-primary-700">Main Image</p>
                             <p class="text-sm text-gray-500 mt-1">Recommended: 800×800px</p>
                             <div class="mt-4 text-primary-600 hover:text-primary-800 text-sm font-medium">
-                                <input type="file" name="" id="">
-                                <!-- <i class="fas fa-upload mr-1"></i> Upload -->
+                                <input type="file" name="image1" id="" name="image1" accept="image/*" required>
+                                
                             </div>
-                        </div>
-                        
-                        <!-- Additional Images -->
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
-                            <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                                <i class="fas fa-plus text-2xl text-gray-400"></i>
-                            </div>
-                            <p class="font-medium">Additional Image</p>
-                            <p class="text-sm text-gray-500 mt-1">Show different angles</p>
                         </div>
                         
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
                             <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                                <i class="fas fa-plus text-2xl text-gray-400"></i>
+                                
                             </div>
                             <p class="font-medium">Additional Image</p>
                             <p class="text-sm text-gray-500 mt-1">Show different angles</p>
+                            <input type="file" id="" name="image2" accept="image/*" required>
                         </div>
-                    </div>
-                    
-                    <div class="mt-8">
-                        <label class="form-label">Or drag and drop your images here</label>
-                        <div class="dropzone" id="productImageDropzone">
-                            <div class="dz-message needsclick">
-                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                                <h3 class="text-lg font-medium text-gray-700">Drop files here or click to upload</h3>
-                                <span class="text-sm text-gray-500">PNG, JPG, GIF up to 10MB</span>
+                        
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
+                            <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                
                             </div>
+                            <p class="font-medium">Additional Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Show different angles</p>
+                            <input type="file"  id="" name="image3" accept="image/*" required>
                         </div>
                     </div>
                 </div>
             </div>
+
             
+             <input type="hidden" name="name" :value="productData.name">
+                <input type="hidden" name="description" :value="productData.description">
+                <input type="hidden" name="category" :value="productData.category">
+                <input type="hidden" name="price" :value="productData.price">
+                <input type="hidden" name="quantity" :value="productData.quantity">
+                <input type="hidden" name="harvestDate" :value="productData.harvestDate">
+                <input type="hidden" name="shelf_life" :value="productData.shelf_life.day_or_week_count">
+                <input type="hidden" name="pricing_model" :value="productData.pricingModel">
+                <input type="hidden" name="shelf_life_DAY_OR_WEEK" :value="productData.shelf_life.day_or_week">
+                <input type="hidden" name="is_local_farm" :value="productData.is_local_farm">
+                <input type="hidden" name="isNon_gmo" :value="productData.isNon_gmo">
+                <input type="hidden" name="isOrganic" :value="productData.isOrganic">
+                <input type="hidden" name="min_order" :value="productData.min_order">
+
+
+                <button class="cta-gradient text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition flex items-center">
+                    <i class="fas fa-cloud-upload-alt mr-2"></i> Publish Product
+                </button>
+                <button class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition mt-8" @click="currentStep = 2">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                </form>
+                
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Image Upload Section (Present on all steps) -->
+            <!-- <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+                <div class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Product Images</h2>
+                    <p class="text-gray-600 mb-8">Upload high-quality images of your product. The first image will be used as the main display image.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
+                        <div class="border-2 border-dashed border-primary-500 rounded-lg p-4 text-center bg-primary-50">
+                            <div class="h-40 bg-gray-200 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-camera text-3xl text-gray-400"></i>
+                            </div>
+                            <p class="font-medium text-primary-700">Main Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Recommended: 800×800px</p>
+                            <div class="mt-4 text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                <input type="file" name="image1" id="" name="image1">
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
+                            <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                
+                            </div>
+                            <p class="font-medium">Additional Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Show different angles</p>
+                            <input type="file" id="" name="image2">
+                        </div>
+                        
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary-500 hover:bg-primary-50 transition cursor-pointer">
+                            <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                
+                            </div>
+                            <p class="font-medium">Additional Image</p>
+                            <p class="text-sm text-gray-500 mt-1">Show different angles</p>
+                            <input type="file"  id="" name="image3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+                   
+             -->
             <!-- AI Insights Panel -->
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div class="p-8">

@@ -6,6 +6,35 @@
     {% trans "Sign Out" %}
 {% endblock head_title %}
 
+
+{% block extra_head %}
+<style>
+    /* Layout reused from login page */
+    .login-container { max-width: 420px; margin: 40px auto; }
+    .login-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .login-header { background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%); color: #fff; padding: 30px; text-align: center; }
+    .login-header h2 { font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 10px; }
+    .login-header p { opacity: 0.9; margin: 0; }
+    .login-body { padding: 30px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; }
+    .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+    .form-group input:focus { outline: none; border-color: white; box-shadow: 0 0 4px rgba(244,113,55,0.3); }
+    .btn-login { background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%); border: none; padding: 12px; font-weight: 600; border-radius: 8px; transition: all 0.3s; color: #fff; }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244,113,55,0.25); }
+    .login-footer { padding-top: 15px; font-size: 14px; color: #6c757d; }
+    .login-footer a { text-decoration: none; font-weight: 500; color: white; }
+    .login-footer a:hover { text-decoration: underline; }
+    /* Messages styling */
+    .alert-messages { margin-bottom: 20px; }
+    .alert { padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 10px; }
+    .alert.success { background: #d4edda; color: #155724; }
+    .alert.error, .alert.danger { background: #f8d7da; color: #721c24; }
+    .alert.info { background: #d1ecf1; color: #0c5460; }
+    .alert.warning { background: #fff3cd; color: #856404; }
+</style>
+{% endblock extra_head %}
+
+
 {% block content %}
 
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
@@ -53,30 +82,3 @@
     </div>
 </div>
 {% endblock content %}
-
-{% block extra_head %}
-<style>
-    /* Layout reused from login page */
-    .login-container { max-width: 420px; margin: 40px auto; }
-    .login-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-    .login-header { background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%); color: #fff; padding: 30px; text-align: center; }
-    .login-header h2 { font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 10px; }
-    .login-header p { opacity: 0.9; margin: 0; }
-    .login-body { padding: 30px; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; }
-    .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-    .form-group input:focus { outline: none; border-color: white; box-shadow: 0 0 4px rgba(244,113,55,0.3); }
-    .btn-login { background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%); border: none; padding: 12px; font-weight: 600; border-radius: 8px; transition: all 0.3s; color: #fff; }
-    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244,113,55,0.25); }
-    .login-footer { padding-top: 15px; font-size: 14px; color: #6c757d; }
-    .login-footer a { text-decoration: none; font-weight: 500; color: white; }
-    .login-footer a:hover { text-decoration: underline; }
-    /* Messages styling */
-    .alert-messages { margin-bottom: 20px; }
-    .alert { padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 10px; }
-    .alert.success { background: #d4edda; color: #155724; }
-    .alert.error, .alert.danger { background: #f8d7da; color: #721c24; }
-    .alert.info { background: #d1ecf1; color: #0c5460; }
-    .alert.warning { background: #fff3cd; color: #856404; }
-</style>
-{% endblock extra_head %}
