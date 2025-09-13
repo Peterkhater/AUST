@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile - FarmConnect AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
+            min-height: 100vh;
+        }
+        
+        .form-input{
+            width: 100%;
+            padding: 0 4px;
+            border: 2px rgb(152, 152, 152) solid;
+            border-radius: 5px;
+        }
+        
+        .form-label{
+            display: block;
+            font-size: small;
+            color: gray;
+            margin-bottom: 2px;
+        }
+        .btn-primary {
+            @apply bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition shadow-md;
+        }
+        .btn-secondary {
+            @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition;
+        }
+        .image-upload {
+            @apply border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer transition;
+        }
+        .image-upload:hover {
+            @apply border-primary-500 bg-primary-50;
+        }
+    </style>
+</head>
+{% include "core/base.html" %}
+
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl w-full space-y-8 bg-white p-8 rounded-2xl shadow-lg">
+            <div>
+                <div class="flex justify-center">
+                    <i class="fas fa-leaf text-4xl text-primary-600"></i>
+                </div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Update Your Farmer Profile
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Keep your information up to date to connect better with customers
+                </p>
+            </div>
+            
+            <form class="mt-8 space-y-6" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Personal Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h3>
+                        
+                        <!-- Phone Field -->
+                        <div>
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input id="phone" name="phone" type="text" class="form-input" placeholder="+961 71 123 456" {%if profile_data.phone %} value="{{profile_data.phone}}" {%endif%}>
+                        </div>
+                        
+                        <!-- Location Field -->
+                        <div>
+                            <label for="location" class="form-label">Location</label>
+                            <input id="location" name="location" type="text" class="form-input" placeholder="Western Bekaa, Lebanon" value="{{request.user.country}}, {{request.user.governorate}} {{request.user.city_village}}">
+                        </div>
+                        
+                        <!-- Bio Field -->
+                        <div>
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea id="bio" name="bio" rows="3" class="form-input" placeholder="Tell us about yourself and your farming practices" {%if profile_data.bio %} value="{{profile_data.bio}}" {%endif%}></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Farm Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-medium text-gray-900 border-b pb-2">Farm Information</h3>
+                        
+                        <!-- Farm Name Field -->
+                        <div>
+                            <label for="farm_name" class="form-label">Farm Name</label>
+                            <input id="farm_name" name="farm_name" type="text" class="form-input" placeholder="Green Valley Organic Farm" 
+                            {%if profile_data.farm_name %} value="{{profile_data.farm_name}}" {%endif%}
+                            >
+                        </div>
+                        
+                        <!-- Specialties Field -->
+                        <div>
+                            <label for="specialties" class="form-label">Specialties</label>
+                            <input id="specialties" name="specialties" type="text" class="form-input" placeholder="Tomatoes, Olives, Grapes">
+                            <p class="mt-1 text-xs text-gray-500">Separate specialties with commas</p>
+                        </div>
+                        
+                        <!-- Profile Image Field -->
+                        <div>
+                            <label class="form-label">Profile Image</label>
+                            <div class="mt-1 flex items-center">
+                                <span class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100">
+                                    <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </span>
+                                <label for="profile_image" class="ml-5 image-upload">
+                                    <span class="text-primary-600 font-medium">Upload a file</span>
+                                    <input id="profile_image" name="profile_image" type="file" class="sr-only" accept="image/*">
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Cover Image Field -->
+                        <div>
+                            <label class="form-label">Cover Image</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="cover_image" class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none">
+                                            <span>Upload a file</span>
+                                            <input id="cover_image" name="cover_image" type="file" class="sr-only" accept="image/*">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-8 pt-6 border-t border-gray-200 gap-4">
+                    <a href="{%url 'profile'%}" class="btn-secondary w-full md:w-auto text-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Profile
+                    </a>
+                    <button type="submit" class="btn-primary w-full md:w-auto">
+                        <i class="fas fa-save mr-2"></i> Update Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple image preview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile image preview
+            const profileImageInput = document.getElementById('profile_image');
+            const profileImagePreview = document.querySelector('span.inline-block.h-12.w-12.rounded-full');
+            
+            profileImageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profileImagePreview.innerHTML = `<img src="${e.target.result}" class="h-full w-full object-cover rounded-full">`;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

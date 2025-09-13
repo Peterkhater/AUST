@@ -1,36 +1,103 @@
-    <nav class="fixed w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm py-4">
-        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
-            <a href="#" class="flex items-center space-x-2">
-                <span class="text-primary-600">
-                    <i class="fas fa-leaf text-2xl"></i>
-                </span>
-                <span class="font-bold text-xl text-primary-800">FarmConnect<span class="text-primary-600">AI</span></span>
-            </a>
-            
-            <div class="hidden md:flex space-x-8">
-                <a href="#" class="text-primary-700 font-medium hover:text-primary-500 transition">Home</a>
-                <a href="{%url 'products'%}" class="text-gray-600 hover:text-primary-500 transition">Marketplace</a>
-                <a href="#" class="text-gray-600 hover:text-primary-500 transition">For Farmers</a>
-                <a href="{%url 'weather'%}" class="text-gray-600 hover:text-primary-500 transition">Weather Tools</a>
-                <a href="#" class="text-gray-600 hover:text-primary-500 transition">About</a>
+<nav class="fixed w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm py-4">
+    <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="#" class="flex items-center space-x-2">
+            <span class="text-primary-600">
+                <i class="fas fa-leaf text-2xl"></i>
+            </span>
+            <span class="font-bold text-xl text-primary-800">
+                FarmConnect<span class="text-primary-600">AI</span>
+            </span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-8">
+            <a href="{%url 'home_page'%}" class="text-primary-700 font-medium hover:text-primary-500 transition">Home</a>
+            <a href="{% url 'products' %}" class="text-gray-600 hover:text-primary-500 transition">Marketplace</a>
+            <!-- <a href="#" class="text-gray-600 hover:text-primary-500 transition">For Farmers</a> -->
+            <a href="{% url 'weather' %}" class="text-gray-600 hover:text-primary-500 transition">Weather Tools</a>
+    
+            {% if user.is_authenticated %}
+                <a href="{% url 'account_logout' %}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">
+                    Logout
+                </a>
+                <div class="flex items-center space-x-4">
+                
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-primary-600"></i>
+                    </div>
+                    <a href="{%url 'profile'%}">
+                    <span class="hidden md:block text-sm font-medium">{{request.user.username}}</span>
+                    </a>
+                </div>
             </div>
-            
-            <div class="flex items-center space-x-4">
-                <button class="hidden md:block text-gray-600 hover:text-primary-600 transition">
-                    <i class="fas fa-search"></i>
-                </button>
-                <button class="hidden md:block text-gray-600 hover:text-primary-600 transition">
-                    <i class="fas fa-shopping-cart"></i>
-                </button>
-                {% if user.is_authenticated %}
-                <a href="{%url 'account_logout'%}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">logout</a>
                 {% else %}
-                <a href="{%url 'account_login'%}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">SignIn</a>
-                <a href="{%url 'account_signup'%}" class="bg-white-600 text-primary-600 px-4 py-2 rounded-full hover:bg-primary-700 hover:text-white transition shadow-md border-primary-600">SignUp</a>
-                {% endif %}
-                <button class="md:hidden text-gray-600">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
+                <a href="{% url 'account_login' %}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">
+                    SignIn
+                </a>
+                <a href="{% url 'account_signup' %}" class="bg-white text-primary-600 px-4 py-2 rounded-full border border-primary-600 hover:bg-primary-700 hover:text-white transition shadow-md">
+                    SignUp
+                </a>
+            {% endif %}
         </div>
-    </nav>
+
+        <!-- Actions -->
+        <div class="flex items-center space-x-4">
+            <button class="hidden md:block text-gray-600 hover:text-primary-600 transition">
+                <i class="fas fa-search"></i>
+            </button>
+            
+
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-gray-600">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden flex-col space-y-4 md:hidden mt-4 px-4 pb-4" >
+        <div class="container my-8" style="flex-direction: column; display: flex;">
+        <a href="{%url 'home_page'%}" class="text-primary-700 font-medium hover:text-primary-500 transition p-3">Home</a>
+        <a href="{% url 'products' %}" class="text-gray-600 hover:text-primary-500 transition p-3">Marketplace</a>
+        <!-- <a href="#" class="text-gray-600 hover:text-primary-500 transition p-3">For Farmers</a> -->
+        <a href="{% url 'weather' %}" class="text-gray-600 hover:text-primary-500 transition p-3">Weather Tools</a>
+       
+        </div>
+        {% if user.is_authenticated %}
+     <a href="{% url 'account_logout' %}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">
+                    Logout
+                </a>
+                <div class="flex items-center space-x-4">
+                
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                       <a href="{%url 'profile'%}"><i class="fas fa-user text-primary-600"></i></a>
+                    </div>
+                    <a href="{%url 'profile'%}">
+                    <span class="hidden md:block text-sm font-medium">{{request.user.username}}</span>
+                    </a>
+                </div>
+            </div>
+        {% else %}
+        <a href="{% url 'account_login' %}" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 transition shadow-md">
+            SignIn
+        </a>
+        <a href="{% url 'account_signup' %}" class="bg-white text-primary-600 px-4 py-2 rounded-full border border-primary-600 hover:bg-primary-700 hover:text-white transition shadow-md">
+            SignUp
+        </a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- Mobile Menu Script -->
+<script>
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>

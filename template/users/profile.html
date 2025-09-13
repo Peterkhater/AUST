@@ -8,6 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+       <!-- Swiper.js for carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <!-- noUiSlider for price filtering -->
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -145,7 +149,7 @@
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm py-4">
+    <!-- <nav class="bg-white shadow-sm py-4">
         <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
             <a href="#" class="flex items-center space-x-2">
                 <span class="text-primary-600">
@@ -174,21 +178,34 @@
             </div>
         </div>
     </nav>
-    
+     -->
+    {%include 'core/base.html'%}
     <!-- Main Content -->
     <main class="container mx-auto px-4 md:px-6 py-8">
         <div class="max-w-6xl mx-auto">
             <!-- Cover Photo Section -->
             <div class="relative mb-20">
                 <div class="h-64 w-full bg-gradient-to-r from-primary-500 to-primary-700 rounded-2xl overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80" alt="Cover photo" class="w-full h-full object-cover">
+                    <img src="{%if data.cover_image%}
+                    {{data.cover_image.url}}
+                    {%else%}
+                    https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80
+                    {%endif%}" alt="Cover photo" class="w-full h-full object-cover">
                 </div>
                 
                 <!-- Profile Photo -->
                 <div class="absolute -bottom-14 left-8">
                     <div class="relative">
                         <div class="w-32 h-32 rounded-full border-4 border-white bg-white overflow-hidden shadow-lg">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Profile photo" class="w-full h-full object-cover">
+                            {%if data.profile_image%}
+                            <img src="{{data.profile_image.url}}">
+                            {%else%}
+                            <span class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100">
+                                    <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </span>
+                            {%endif%}
                         </div>
                         <button class="absolute bottom-0 right-0 bg-primary-600 text-white p-2 rounded-full shadow-md edit-btn">
                             <i class="fas fa-camera"></i>
@@ -209,12 +226,14 @@
                     <div class="profile-card bg-white rounded-2xl p-6 mb-6">
                         <div class="flex justify-between items-start mb-6">
                             <div>
-                                <h1 class="text-2xl font-bold">John Farmer</h1>
+                                <h1 class="text-2xl font-bold">{{request.user.username}}</h1>
                                 <p class="text-gray-600">Member since September 2023</p>
                             </div>
+                            <a href="{%url 'profile_edit'%}">
                             <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition edit-btn">
                                 <i class="fas fa-edit mr-2"></i> Edit Profile
                             </button>
+                            </a>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -222,7 +241,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                 <div class="flex items-center p-3 bg-gray-50 rounded-lg">
                                     <i class="fas fa-phone text-gray-500 mr-3"></i>
-                                    <span>+961 71 123 456</span>
+                                    <span>{{data.phone}}</span>
                                 </div>
                             </div>
                             
@@ -230,19 +249,26 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
                                 <div class="flex items-center p-3 bg-gray-50 rounded-lg">
                                     <i class="fas fa-map-marker-alt text-gray-500 mr-3"></i>
-                                    <span>Western Bekaa, Lebanon</span>
+                                     <span>
+                                        {%if data.location%}
+                                        {{data.location}}
+                                        {%else%}
+                                        {{request.user.country}}, {{request.user.governorate}} {{request.user.city_village}}
+                                        {%endif%}
+                                     </span>
                                 </div>
                             </div>
                             
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                                 <div class="p-3 bg-gray-50 rounded-lg">
-                                    <p class="text-gray-800">Third-generation farmer specializing in organic produce. Passionate about sustainable farming practices and connecting directly with consumers through FarmConnect AI.</p>
+                                    <p class="text-gray-800">{{data.bio}}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
+                    {%if request.user.role == 'farmer'%}
                     <!-- Farm Information -->
                     <div class="profile-card bg-white rounded-2xl p-6 mb-6">
                         <h2 class="text-xl font-bold mb-6">Farm Information</h2>
@@ -252,59 +278,25 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Farm Name</label>
                                 <div class="flex items-center p-3 bg-gray-50 rounded-lg">
                                     <i class="fas fa-tractor text-gray-500 mr-3"></i>
-                                    <span>Green Valley Organic Farm</span>
+                                    <span>{{data.farm_name}}</span>
                                 </div>
                             </div>
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Specialties</label>
                                 <div class="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg">
-                                    <span class="specialty-tag bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">Tomatoes</span>
-                                    <span class="specialty-tag bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">Olives</span>
-                                    <span class="specialty-tag bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">Grapes</span>
-                                    <span class="specialty-tag bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">Lettuce</span>
+                                    <span class="specialty-tag bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm">{{data.specialties}}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
+                {%endif%}
                     <!-- Edit Form (Initially Hidden) -->
                     <div class="profile-card bg-white rounded-2xl p-6 mb-6">
                         <h2 class="text-xl font-bold mb-6">Edit Profile Information</h2>
                         
                         <div class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="+961 71 123 456">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Western Bekaa, Lebanon">
-                                </div>
-                                
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent h-32" placeholder="Tell us about yourself and your farm"></textarea>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Farm Name</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Green Valley Organic Farm">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Specialties</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Tomatoes, Olives, Grapes">
-                                    <p class="text-xs text-gray-500 mt-2">Comma-separated list of your farm's specialties</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex justify-end space-x-4">
-                                <button class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</button>
-                                <button class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition">Save Changes</button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -316,7 +308,7 @@
                         <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-seedling text-primary-600 text-3xl"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-2">24</h3>
+                        <h3 class="text-2xl font-bold mb-2">{{products_count}}</h3>
                         <p class="text-gray-600">Total Products</p>
                     </div>
                     
@@ -332,87 +324,56 @@
                                     </div>
                                     <div>
                                         <p class="font-medium">Email Verified</p>
-                                        <p class="text-sm text-gray-500">john@greenvalleyfarm.com</p>
+                                        <p class="text-sm text-gray-500">{{request.user.email}}</p>
                                     </div>
                                 </div>
                             </div>
                             
+                            {%if data.phone%}
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
                                     <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
                                         <i class="fas fa-check text-green-600"></i>
                                     </div>
+                                    
                                     <div>
                                         <p class="font-medium">Phone Verified</p>
-                                        <p class="text-sm text-gray-500">+961 71 123 456</p>
+                                        <p class="text-sm text-gray-500">{{data.phone}}</p>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-clock text-amber-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium">Farm Certification</p>
-                                        <p class="text-sm text-gray-500">Pending review</p>
-                                    </div>
-                                </div>
-                            </div>
+                         {%endif%}
                         </div>
                     </div>
                     
-                    <!-- Account Settings -->
-                    <div class="profile-card bg-white rounded-2xl p-6">
-                        <h2 class="text-xl font-bold mb-4">Account Settings</h2>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="font-medium">Email Notifications</p>
-                                    <p class="text-sm text-gray-500">Order updates, weather alerts</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="font-medium">SMS Notifications</p>
-                                    <p class="text-sm text-gray-500">Urgent updates only</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="font-medium">Public Profile</p>
-                                    <p class="text-sm text-gray-500">Visible to other users</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            
-                            <div class="pt-4 border-t border-gray-200">
-                                <button class="w-full text-red-600 font-medium py-2 rounded-lg hover:bg-red-50 transition">
-                                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                
                 </div>
             </div>
         </div>
     </main>
     
+
+    {%if request.user.role == 'farmer'%}
+    <h1 class="text-center text-2xl">My Products</h1>
+<div class="container" style="display: flex; flex-wrap: wrap; gap: 20px; margin: 40px;">
+    {% for rec in products %}
+                    <div style="width: 250px;">
+                        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                            <div class="h-48 bg-gray-200 overflow-hidden">
+                                <img src="{{rec.image1.url}}" alt="Fresh Vegetables Bundle" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-lg mb-1">{{rec.name}}</h3>
+                                <p class="text-gray-600 text-sm mb-3">From {{rec.farmer.profile.farm_name}} Farms</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary-600 font-bold">${{rec.price}} / {{rec.unit}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%endfor%}
+</div>
+{%endif%}
     <!-- Footer -->
     <footer class="bg-white mt-16 py-10">
         <div class="container mx-auto px-4 md:px-6">
@@ -438,7 +399,7 @@
                         <i class="fab fa-linkedin-in"></i>
                     </a>
                 </div>
-                <p class="text-gray-400 text-sm mt-6">© 2023 FarmConnect AI. All rights reserved.</p>
+                <p class="text-gray-400 text-sm mt-6">© 2025 FarmConnect AI AUST. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -446,6 +407,7 @@
     <script>
         // Simple JavaScript to toggle edit mode
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize
             const editButton = document.querySelector('.edit-btn');
             const viewModeSections = document.querySelectorAll('.profile-card:not(:last-child)');
             const editModeSection = document.querySelector('.profile-card:last-child');

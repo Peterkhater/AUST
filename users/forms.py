@@ -44,3 +44,45 @@ class CustomSignupForm(SignupForm):
         user.longitude = self.cleaned_data['longitude']
         user.save()
         return user
+
+from django import forms
+from .models import Profile
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['phone', 'location', 'bio', 'farm_name', 'specialties', 'profile_image', 'cover_image']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Apply Tailwind classes to form fields
+        self.fields['phone'].widget.attrs.update({
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+            'placeholder': 'Enter your phone number'
+        })
+        self.fields['location'].widget.attrs.update({
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+            'placeholder': 'Enter your location'
+        })
+        self.fields['bio'].widget.attrs.update({
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+            'placeholder': 'Tell us about yourself and your farming practices',
+            'rows': 3
+        })
+        self.fields['farm_name'].widget.attrs.update({
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+            'placeholder': 'Enter your farm name'
+        })
+        self.fields['specialties'].widget.attrs.update({
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+            'placeholder': 'Tomatoes, Olives, Grapes'
+        })
+        self.fields['profile_image'].widget.attrs.update({
+            'class': 'sr-only',
+            'accept': 'image/*'
+        })
+        self.fields['cover_image'].widget.attrs.update({
+            'class': 'sr-only',
+            'accept': 'image/*'
+        })

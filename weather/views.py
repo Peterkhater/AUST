@@ -90,6 +90,7 @@ def generate_ai_advice(weather, forcast):
     You are an agricultural expert.
     Based on the current weather and the 5-day forecast, provide professional farming advisory in strict JSON format only.
     Pay close attention to upcoming changes in temperature, wind, and precipitation from the forecast data to generate relevant weather alerts.
+    pls always give me weather alerts dont keep it none pls.
     Use this structure exactly (no extra text, no explanation):
 
     {{
@@ -141,7 +142,6 @@ def generate_ai_advice(weather, forcast):
 
 
 
-
 def weather(request):
     lat = float(request.GET.get("lat", 33.8497))
     lon = float(request.GET.get("lon", 35.9042)) 
@@ -149,15 +149,41 @@ def weather(request):
     current_weather = get_weather(lat, lon)
     forcast = get_weather_forcast(lat, lon)
 
-    ai_advisory = generate_ai_advice(current_weather,forcast) if current_weather else None
-    print(ai_advisory)
     context = {
-        "current_weather": current_weather,
-        "ai_advisory": ai_advisory,
-        "weather_api" : settings.OPENWEATHER_API_KEY,
-    }
-   
+                "current_weather": current_weather,
+                "weather_api" : settings.OPENWEATHER_API_KEY,
+        }
+    
+    if request.method == "POST":
+        ai_advisory = generate_ai_advice(current_weather,forcast) if current_weather else None
+        print(ai_advisory)
+        context = {
+                "current_weather": current_weather,
+                "ai_advisory": ai_advisory,
+                "weather_api" : settings.OPENWEATHER_API_KEY,
+        }
+        return render(request, "weather/weather.html", context)
+    
     return render(request, "weather/weather.html", context)
+
+
+# def weather(request):
+#     lat = float(request.GET.get("lat", 33.8497))
+#     lon = float(request.GET.get("lon", 35.9042)) 
+
+#     current_weather = get_weather(lat, lon)
+#     forcast = get_weather_forcast(lat, lon)
+
+    
+#     ai_advisory = generate_ai_advice(current_weather,forcast) if current_weather else None
+#     print(ai_advisory)
+#     context = {
+#         "current_weather": current_weather,
+#         "ai_advisory": ai_advisory,
+#         "weather_api" : settings.OPENWEATHER_API_KEY,
+#     }
+   
+#     return render(request, "weather/weather.html", context)
 
 
 def weather_for_location(request):

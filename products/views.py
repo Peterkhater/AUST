@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from openrouter_utils import get_ai_recommendation
 from users.decorators import farmer_required
 from django.contrib.auth.decorators import login_required
@@ -193,6 +193,6 @@ def products_add(request):
                                     shelf_life_type=shelf_life_type,
                                     min_order=min_order,
                                     farmer=farmer)
-            print("product created")
+            return redirect('products')
     return render(request,'products/product_add.html',{})
 

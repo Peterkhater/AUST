@@ -242,36 +242,8 @@
         },
      }">
     <!-- Navigation -->
-    <nav class="sticky top-0 w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm py-4">
-        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
-            <a href="#" class="flex items-center space-x-2">
-                <span class="text-primary-600">
-                    <i class="fas fa-leaf text-2xl"></i>
-                </span>
-                <span class="font-bold text-xl text-primary-800">FarmConnect<span class="text-primary-600">AI</span></span>
-            </a>
-            
-            <div class="hidden md:flex space-x-8">
-                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Home</a>
-                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Marketplace</a>
-                <a href="#" class="text-primary-700 font-medium hover:text-primary-500 transition">For Farmers</a>
-                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Weather Tools</a>
-                <a href="#" class="text-gray-600 hover:text-primary-500 transition">Dashboard</a>
-            </div>
-            
-            <div class="flex items-center space-x-4">
-                <button class="text-gray-600 hover:text-primary-600 transition">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <div class="hidden md:flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-user text-primary-600"></i>
-                    </div>
-                    <span class="text-sm font-medium">Farmer John</span>
-                </div>
-            </div>
-        </div>
-    </nav>
+    {% include "core/base.html" %}
+
     
     <!-- Progress Bar -->
     <div class="bg-white shadow-sm">
@@ -607,7 +579,7 @@
                    
              -->
             <!-- AI Insights Panel -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div class="p-8">
                     <h2 class="text-2xl font-bold mb-6">AI Insights <i class="fas fa-robot text-primary-600"></i></h2>
                     
@@ -638,7 +610,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </main>
     
@@ -681,16 +653,7 @@
                     </ul>
                 </div>
                 
-                <div>
-                    <h3 class="text-lg font-semibold mb-6">Support</h3>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-primary-200 hover:text-white transition">Help Center</a></li>
-                        <li><a href="#" class="text-primary-200 hover:text-white transition">FAQs</a></li>
-                        <li><a href="#" class="text-primary-200 hover:text-white transition">Contact Us</a></li>
-                        <li><a href="#" class="text-primary-200 hover:text-white transition">Shipping & Delivery</a></li>
-                        <li><a href="#" class="text-primary-200 hover:text-white transition">Returns & Refunds</a></li>
-                    </ul>
-                </div>
+               
                 
                 <div>
                     <h3 class="text-lg font-semibold mb-6">Stay Updated</h3>
@@ -705,7 +668,7 @@
             </div>
             
             <div class="pt-10 border-t border-primary-800 text-center text-primary-300 text-sm">
-                <p>© 2023 FarmConnect AI. All rights reserved.</p>
+                <p>© 2025 FarmConnect AI AUST. All rights reserved.</p>
             </div>
         </div>
     </footer>
