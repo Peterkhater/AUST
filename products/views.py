@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product
 from django.core.cache import cache
 from rapidfuzz import fuzz
+from django.shortcuts import get_object_or_404
 
 # def products(request):
 #     # All products
@@ -130,13 +131,23 @@ def products(request):
         nearby_villages = [v.strip() for v in nearby_villages_str.split(",") if v.strip()]
         villages_to_search = [request.user.city_village] + nearby_villages
 
-        # Fuzzy matching to get recommended products
+       
         recommended_products_list = []
-        for product in Product.objects.select_related('farmer').all():
-            for village in villages_to_search:
-                if product.farmer.city_village and fuzz.ratio(product.farmer.city_village.lower(), village.lower()) > 80:
-                    recommended_products_list.append(product)
-                    break
+        # if request.user.is_authenticated:
+        #     for product in Product.objects.select_related('farmer').all():
+        #         for village in villages_to_search:
+        #             if product.farmer.city_village and fuzz.ratio(product.farmer.city_village.lower(), village.lower()) > 80:
+        #                 recommended_products_list.append(product)
+        #                 break
+        if request.user.is_authenticated:
+            for product in Product.objects.select_related('farmer').all():
+                for village in villages_to_search:
+                    farmer_location = (product.farmer.city_village or "").lower()
+                    search_village = (village or "").lower()
+                    if farmer_location and search_village:
+                        if fuzz.ratio(farmer_location, search_village) > 80:
+                            recommended_products_list.append(product)
+                            break
         
         # Sort by creation date and limit to 20
         recommended_products = sorted(recommended_products_list, key=lambda x: x.created_at, reverse=True)[:20]
@@ -195,4 +206,8 @@ def products_add(request):
                                     farmer=farmer)
             return redirect('products')
     return render(request,'products/product_add.html',{})
+
+def products_view(request,id):
+    product = get_object_or_404(Product,id=id)
+    return render(request,'products/product.html',{'data':product})
 

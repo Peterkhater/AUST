@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Produce - FarmConnect AI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Swiper.js for carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <!-- noUiSlider for price filtering -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            400: '#a8a29e',
+                            500: '#78716c',
+                            600: '#57534e',
+                            700: '#44403c',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        accent: {
+                            DEFAULT: '#F47137',
+                            50: '#fef4eb',
+                            100: '#fde6d2',
+                            200: '#fac9a5',
+                            300: '#f7a36d',
+                            400: '#f47137',
+                            500: '#f1531a',
+                            600: '#e23810',
+                            700: '#bb2810',
+                            800: '#962214',
+                            900: '#791f14',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.7s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-delay-1 { animation-delay: 0.2s; }
+        .animate-delay-2 { animation-delay: 0.4s; }
+        .animate-delay-3 { animation-delay: 0.6s; }
+        
+        /* Gradient backgrounds */
+        .hero-gradient {
+            background: linear-gradient(120deg, rgba(20, 83, 45, 0.9) 0%, rgba(101, 163, 13, 0.8) 100%);
+        }
+        
+        .cta-gradient {
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+        }
+        
+        /* Card hover effects */
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Filter sidebar */
+        .filter-section {
+            transition: all 0.3s ease;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+        
+        /* Swiper customization */
+        .swiper-pagination-bullet-active {
+            background-color: #16a34a !important;
+        }
+        
+        /* noUiSlider customization */
+        .noUi-connect {
+            background: #16a34a;
+        }
+        
+        .noUi-handle {
+            border-radius: 50%;
+            background: #16a34a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 2px solid white;
+        }
+        
+        .noUi-handle:before, .noUi-handle:after {
+            display: none;
+        }
+        
+        /* Skeleton loading animation */
+        @keyframes skeleton-loading {
+            0% {
+                background-color: hsl(200, 20%, 80%);
+            }
+            100% {
+                background-color: hsl(200, 20%, 95%);
+            }
+        }
+        
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+    </style>
+</head>
+{% include "core/base.html" %}
+<body class="bg-gray-50 text-gray-800 antialiased ">   
+        <div class="relative bg-white max-w-6xl mx-auto my-8 rounded-2xl shadow-2xl overflow-hidden" >
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2">
+                    <!-- Swiper Product Gallery -->
+                    <div class="swiper product-gallery h-64 md:h-full" style="max-height: 90vh;">
+                        <div class="swiper-wrapper" >
+                            {%if data.image1%}
+                            <div class="swiper-slide">
+                                <img src="{{data.image1.url}}" class="w-full h-full object-cover">
+                            </div>
+                            {%endif%}
+                            {%if data.image2%}
+                            <div class="swiper-slide">
+                                <img src="{{data.image2.url}}" class="w-full h-full object-cover">
+                            </div>
+                            {%endif%}
+                            {%if data.image3%}
+                            <div class="swiper-slide">
+                                <img src="{{data.image3.url}}" class="w-full h-full object-cover">
+                            </div>
+                            {%endif%}
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2 p-6 md:p-8">
+                    <div class="flex items-center mb-2">
+                        {% if data.is_organic%}
+                        <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                            <i class="fas fa-leaf mr-1 text-xs"></i> ORGANIC
+                        </span>
+                        {%endif%}
+                        {% if data.is_Non_GMO%}
+                        <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                            <i class="fas fa-leaf mr-1 text-xs"></i> Is Non GMO
+                        </span>
+                        {%endif%}
+                        {% if data.is_local_farm%}
+                        <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                            <i class="fas fa-leaf mr-1 text-xs"></i> Local Farm
+                        </span>
+                        {%endif%}
+                        <span class="bg-primary-600 text-white text-xs px-2 py-1 rounded-full ml-2">NEW</span>
+
+                        <span class="bg-primary-50 text-primary-600 text-xs px-2 py-1 rounded-full flex items-center">
+                            <i class="fas fa-leaf mr-1 text-xs"></i>Farmer: {{data.farmer.username}}
+                        </span>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold mb-2">{{data.name}}</h2>
+                    <p class="text-gray-600 mb-4">From {{data.farmer.profile.farm_name}} Farm • {{data.farmer.governorate}}, {{data.farmer.city_village}}</p>
+                    
+                    
+                    <p class="text-3xl font-bold text-primary-600 mb-6">${{data.price}} <span class="text-lg text-gray-600">/ {{data.unit}}</span></p>
+                    
+                    <p class="text-gray-700 mb-6">{{data.description}}</p>
+                    
+                    
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-weight text-gray-600 mr-2"></i>
+                            <span>Available Quantity. {{data.quantity}} {%if data.unit == 'perkg'%}Kg{%else%}Unit{%endif%}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            <span>In Stock</span>
+                        </div>
+                    </div>
+                    
+                        <p class="text-gray-700 text-sm md:text-base">
+                        Minimum Order Quantity:
+                        <span class="font-semibold text-primary-600 bg-primary-50 px-2 py-1 rounded-md">
+                            {{ data.min_order }}
+                        </span>
+                        <span class="ml-1 text-gray-600">
+                            {% if data.unit == 'perkg' %}Kg{% else %}Unit{% endif %}
+                        </span>
+                        </p>
+
+                    <br>
+                        <p class="text-gray-700 text-sm md:text-base">
+                            <i class="fa-solid fa-calendar-days"></i> 
+                       Harvest Day:
+                        <span class="font-semibold text-primary-600 bg-primary-50 px-2 py-1 rounded-md">
+                            {{ data.harvest_date }}
+                        </span>
+                        </p>
+
+                    <br>
+                    <label for="order_count">Quantity: </label>
+                <input 
+  type="number" 
+  id="order_count" 
+  name="order_count"
+  min="{{ data.min_order }}" 
+  max="{{ data.quantity }}" 
+  value="{{ data.min_order }}"
+  class="w-28 px-3 py-2 border border-gray-300 rounded-lg shadow-sm 
+         focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
+         text-gray-700 text-sm mb-5"
+/><span> {%if data.unit == 'perkg'%}Kg{%else%}Unit{%endif%}</span>
+                    <div class="flex space-x-4">
+                        <a 
+                            id="whatsappBtn"
+                            href="#"
+                            target="_blank"
+                            class="flex-grow bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
+                            >
+                        <button class="flex-grow bg-primary-600 text-white py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i> Order Now
+                        </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+ <script>
+        // Initialize price sliders
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize recommended products swiper
+            const recommendedSwiper = new Swiper('.recommended-swiper', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                    },
+                    1024: {
+                        slidesPerView: 3,
+                    },
+                    1280: {
+                        slidesPerView: 4,
+                    },
+                }
+            });
+            
+            // Initialize product gallery swiper
+            const productGallerySwiper = new Swiper('.product-gallery', {
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+        // Replace with your real WhatsApp number
+  const whatsappNumber = "{{data.farmer.profile.phone}}"; 
+
+  // Django context values
+  const productName = "{{ data.name }}";
+  const farmName = "{{ data.farmer.profile.farm_name }}";
+  const unit = "{% if data.unit == 'perkg' %}Kg{% else %}Unit{% endif %}";
+  const price = "{{ data.price }}";
+  const harvestDay = "{{ data.harvest_date }}";
+
+  const input = document.getElementById("order_count");
+  const whatsappBtn = document.getElementById("whatsappBtn");
+
+  function updateWhatsappLink() {
+    const quantity = input.value || "{{ data.min_order }}";
+    const message = `Hello, I would like to order ${quantity} ${unit} of ${productName} from ${farmName} Farm. Price: $${price} per ${unit}. Harvest Day: ${harvestDay}`;
+    const encodedMessage = encodeURIComponent(message);
+    whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+  }
+
+  // Update link on page load + when input changes
+  updateWhatsappLink();
+  input.addEventListener("input", updateWhatsappLink);
+
+    </script>
+</body>
+</html>
+
+
+
+
