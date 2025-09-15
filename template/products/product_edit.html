@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - FarmConnect AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
+            min-height: 100vh;
+        }
+        .form-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .form-input{
+            width: 100%;
+            padding: 3px 4px;
+            border: 2px solid rgb(202, 202, 202);
+            border-radius:4px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: small;
+            font-weight: 700;
+            color: grey;
+            margin-bottom: 2px;
+        }
+        .image-preview {
+            transition: all 0.3s ease;
+        }
+        .image-preview:hover {
+            transform: scale(1.02);
+        }
+        /* .checkbox-label {
+            @apply flex items-center space-x-2 cursor-pointer;
+        } */
+        .checkbox-label{
+            display: flex;
+            justify-content: center;
+            word-spacing: 0 2px;
+            cursor: pointer;
+        }
+        .checkbox-input {
+            @apply h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded;
+        }
+        /* .checkbox-input {
+           
+        } */
+    </style>
+</head>
+<body class="py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Edit Product</h1>
+            <p class="text-gray-600">Update your product information to keep it current for customers</p>
+        </div>
+
+        <!-- Edit Product Form -->
+        <form method="POST" enctype="multipart/form-data" class="form-card bg-white rounded-2xl p-6 md:p-8">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Left Column - Basic Information -->
+                <div class="space-y-6">
+                    <h2 class="text-xl font-bold text-gray-800 border-b pb-2">Basic Information</h2>
+                    
+                    <!-- Product Name -->
+                    <div>
+                        <label for="name" class="form-label">Product Name *</label>
+                        <input type="text" id="name" name="name" class="form-input" value="{%if product.name%}{{product.name}}{%endif%}" required>
+                    </div>
+                    
+                    <!-- Category -->
+                    <div>
+                        <label for="category" class="form-label">Category *</label>
+                        <select id="category" name="category" class="form-input" required>
+                            <option value="fruits" {%if product.category == 'fruits'%}selected {%endif%}>Fruits</option>
+                            <option value="vegetables" {%if product.category == 'vegetables'%}selected {%endif%}>Vegetables</option>
+                            <option value="grains" {%if product.category == 'grains'%}selected {%endif%}>Grains</option>
+                            <option value="dairy" {%if product.category == 'dairy'%}selected {%endif%}>Dairy</option>
+                            <option value="meat" {%if product.category == 'meat'%}selected {%endif%}>Meat</option>
+                            <option value="other" {%if product.category == 'other'%}selected {%endif%}>Other</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" rows="4" class="form-input" placeholder="Describe your product in detail...">{{product.description}}</textarea>
+                    </div>
+                    
+                    <!-- Harvest Date -->
+                    <div>
+                        <label for="harvest_date" class="form-label">Harvest Date *</label>
+                        <input type="date" id="harvest_date" name="harvest_date" class="form-input" value="{%if product.harvest_date%}{{product.harvest_date}}{%endif%}" >
+                    </div>
+                </div>
+                
+                <!-- Right Column - Pricing & Inventory -->
+                <div class="space-y-6">
+                    <h2 class="text-xl font-bold text-gray-800 border-b pb-2">Pricing & Inventory</h2>
+                    
+                    <!-- Price -->
+                    <div>
+                        <label for="price" class="form-label">Price *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+                            <input type="number" id="price" name="price" step="0.01" min="0" class="form-input pl-8" value="{{product.price}}" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Unit -->
+                    <div>
+                        <label for="unit" class="form-label">Unit *</label>
+                        <select id="unit" name="unit" class="form-input" required>
+                            <option value="perKg" {%if product.unit == 'perKg'%}selected {%endif%}>Per Kg</option>
+                            <option value="perUnit" {%if product.unit == 'perUnit'%}selected {%endif%}>Per Unit</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Quantity -->
+                    <div>
+                        <label for="quantity" class="form-label">Quantity *</label>
+                        <input type="number" id="quantity" name="quantity" min="0" class="form-input" value="{{product.quantity}}" required>
+                    </div>
+                    
+                    <!-- Minimum Order -->
+                    <div>
+                        <label for="min_order" class="form-label">Minimum Order Quantity</label>
+                        <input type="number" id="min_order" name="min_order" min="0" class="form-input" value="{{product.min_order}}">
+                    </div>
+                    
+                    <!-- Shelf Life -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="shelf_life" class="form-label">Shelf Life</label>
+                            <input type="number" id="shelf_life" name="shelf_life" min="0" class="form-input" value="{{product.shelf_life}}">
+                        </div>
+                        <div>
+                            <label for="shelf_life_type" class="form-label">Time Unit</label>
+                            <select id="shelf_life_type" name="shelf_life_type" class="form-input">
+                                <option value="day" {%if product.shelf_life_type == 'day'%}selected {%endif%}>Days</option>
+                                <option value="week" {%if product.shelf_life_type == 'week'%}selected {%endif%}>Weeks</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Certifications -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Certifications</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is_organic" name="is_organic" class="checkbox-input" {%if product.is_organic%} checked {%endif%}>
+                        <span class="text-gray-700">Organic</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is_Non_GMO" name="is_Non_GMO" class="checkbox-input" {%if product.is_Non_GMO%} checked {%endif%}>
+                        <span class="text-gray-700">Non-GMO</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is_local_farm" name="is_local_farm" class="checkbox-input" {%if product.is_local_farm%} checked {%endif%}>
+                        <span class="text-gray-700">Local Farm</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Availability -->
+            <!-- <div class="mt-6">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="is_available" name="is_available" class="checkbox-input" checked>
+                    <span class="text-gray-700 font-medium">Product is currently available for sale</span>
+                </label>
+            </div> -->
+            
+            <!-- Product Images -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Product Images</h2>
+                <p class="text-gray-600 mb-6">Upload high-quality images of your product. The first image will be used as the main display image.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Image 1 -->
+                    <div>
+                        <label for="image1" class="form-label">Primary Image *</label>
+                        <div class="mt-1">
+                            <div class="image-preview h-48 bg-gray-200 rounded-lg overflow-hidden mb-2">
+                                <img src="{% if product.image1 %} {{product.image1.url}} {%endif%}" alt="Product" class="w-full h-full object-cover">
+                            </div>
+                            <input type="file" id="image1" name="image1" accept="image/*" class="form-input py-2 text-sm">
+                        </div>
+                    </div>
+                    
+                    <!-- Image 2 -->
+                    <div>
+                        <label for="image2" class="form-label">Additional Image</label>
+                        <div class="mt-1">
+                            <div class="image-preview h-48 bg-gray-200 rounded-lg overflow-hidden mb-2">
+                                <img src="{% if product.image2 %} {{product.image2.url}} {%endif%}" alt="Product" class="w-full h-full object-cover">
+                            </div>
+                            <input type="file" id="image2" name="image2" accept="image/*" class="form-input py-2 text-sm">
+                        </div>
+                    </div>
+                    
+                    <!-- Image 3 -->
+                    <div>
+                        <label for="image3" class="form-label">Additional Image</label>
+                        <div class="mt-1">
+                            <div class="image-preview h-48 bg-gray-200 rounded-lg overflow-hidden mb-2">
+                                <img src="{% if product.image3 %}{{product.image3.url}}{%endif%}" alt="Product" class="w-full h-full object-cover">
+                            </div>
+                            <input type="file" id="image3" name="image3" accept="image/*" class="form-input py-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-10 pt-6 border-t border-gray-200 gap-4">
+                <a href="{%url 'profile' %}" class="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition w-full md:w-auto text-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Cancel
+                </a>
+                <div class="flex space-x-4 w-full md:w-auto">
+                    
+                    <button type="submit" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition w-1/2 md:w-auto">
+                        <i class="fas fa-save mr-2"></i> Update Product
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Image preview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for each image input
+            setupImagePreview('image1');
+            setupImagePreview('image2');
+            setupImagePreview('image3');
+            
+            function setupImagePreview(inputId) {
+                const input = document.getElementById(inputId);
+                const preview = input.previousElementSquerySelector('img');
+                
+                if (input && preview) {
+                    input.addEventListener('change', function() {
+                        const file = this.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.src = e.target.result;
+                            }
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

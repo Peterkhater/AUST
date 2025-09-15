@@ -1,3 +1,4 @@
+from django.http.response import JsonResponse
 from django.shortcuts import redirect, render
 from openrouter_utils import get_ai_recommendation
 from users.decorators import farmer_required
@@ -211,3 +212,69 @@ def products_view(request,id):
     product = get_object_or_404(Product,id=id)
     return render(request,'products/product.html',{'data':product})
 
+
+def product_delete(request,id):
+    product = get_object_or_404(Product,id=id)
+    if not request.user == product.farmer:
+        return redirect('products')
+    if request.method =="DELETE":
+        try:
+            product_to_delete = get_object_or_404(Product,id=id)
+            product_to_delete.delete()
+            return JsonResponse({"success": True})
+        except Product.DoesNotExist:
+            return JsonResponse({"error": "Product not found"}, status=404)
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Product
+
+@login_required
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id, farmer=request.user)
+    
+    if request.method == 'POST':
+        # Update product fields from form data
+        product.name = request.POST.get('name')
+        product.description = request.POST.get('description')
+        product.category = request.POST.get('category')
+        product.price = request.POST.get('price')
+        product.quantity = request.POST.get('quantity')
+        product.unit = request.POST.get('unit')
+        product.min_order = request.POST.get('min_order')
+        
+        product.shelf_life = request.POST.get('shelf_life')
+        product.shelf_life_type = request.POST.get('shelf_life_type')
+        
+        # Handle checkboxes
+        product.is_organic = 'is_organic' in request.POST
+        product.is_Non_GMO = 'is_Non_GMO' in request.POST
+        product.is_local_farm = 'is_local_farm' in request.POST
+        product.is_available = 'is_available' in request.POST
+        
+        if request.POST.get('harvest_date'):
+            product.harvest_date = request.POST.get('harvest_date')
+
+        # Handle image uploads
+        if 'image1' in request.FILES:
+            product.image1 = request.FILES['image1']
+        if 'image2' in request.FILES:
+            product.image2 = request.FILES['image2']
+        if 'image3' in request.FILES:
+            product.image3 = request.FILES['image3']
+        
+        try:
+            product.save()
+            messages.success(request, 'Product updated successfully!')
+            return redirect('products_view', id=product.id)
+            print('Product updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating product: {str(e)}')
+            print(f'Error updating product: {str(e)}')
+    
+    context = {
+        'product': product
+    }
+    return render(request, 'products/product_edit.html', context)

@@ -369,6 +369,12 @@
                                     <span class="text-primary-600 font-bold">${{rec.price}} / {{rec.unit}}</span>
                                 </div>
                             </div>
+                            <div class="dish-action">
+                                <button onclick="deleteProduct({{ rec.id }})" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition edit-btn m-2"><i class="fas fa-trash"></i> Delete</button>
+                                <a href="{%url 'products_edit' product_id=rec.id%}">
+                                <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition edit-btn m-2"><i class="fas fa-pen"></i> edit</button>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     {%endfor%}
@@ -405,6 +411,22 @@
     </footer>
 
     <script>
+
+function deleteProduct(product_id) {
+            
+    fetch("{% url 'products_delete' 0 %}".replace("0", product_id), {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+    }).then(response => {
+        if (response.ok) {
+            location.reload(true);
+        }
+    });
+}
+
+
         // Simple JavaScript to toggle edit mode
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize
